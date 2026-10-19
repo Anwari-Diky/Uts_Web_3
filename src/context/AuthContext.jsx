@@ -24,8 +24,16 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (res.ok) {
-          const data = await res.json();
-          setUser(data.data.user);
+          try {
+            const data = await res.json();
+            if (data?.data?.user) {
+              setUser(data.data.user);
+            } else {
+              setUser(null);
+            }
+          } catch {
+            setUser(null);
+          }
         } else {
           // Token expired or invalid
           localStorage.removeItem('spk_token');
@@ -51,9 +59,14 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await res.json();
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        data = null;
+      }
 
-      if (!res.ok) {
+      if (!res.ok || !data) {
         const errorMsg = data?.error?.message || 'Login gagal. Periksa kembali kredensial Anda.';
         setAuthError(errorMsg);
         return { success: false, error: errorMsg };

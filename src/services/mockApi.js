@@ -1,10 +1,10 @@
 /**
  * Mock API Fallback for Vercel / Standalone Demo Mode
  * 
- * Intercepts window.fetch for /api/v1/* routes.
- * - When backend server is ONLINE: Passes through to real Express/MySQL backend.
- * - When backend server is OFFLINE or running on Vercel: Seamlessly serves deterministic
- *   demo data so the entire application functions interactively without errors.
+ * Intercepts window.fetch for /api/v1/* routes:
+ * - On Vercel (or non-localhost domains): Instantly serves comprehensive mock data
+ *   so login, dashboard, tables, SAW calculation, and reports function 100% offline.
+ * - On Localhost: Automatically connects to the real Express + MySQL backend when running.
  */
 
 const STORAGE_KEY_PREFIX = 'spk_demo_mock_';
@@ -59,6 +59,19 @@ const initialCriteria = [
   { id: 5, code: 'C5', name: 'Dampak terhadap Kegiatan Laboratorium', type: 'benefit', weight: 0.20 },
   { id: 6, code: 'C6', name: 'Ketersediaan Suku Cadang', type: 'benefit', weight: 0.05 },
   { id: 7, code: 'C7', name: 'Kelayakan Perbaikan', type: 'benefit', weight: 0.05 },
+];
+
+const initialScales = [
+  { id: 1, criterion_id: 1, criterion_code: 'C1', scale_value: 1, description: 'Ringan/tidak mengganggu' },
+  { id: 2, criterion_id: 1, criterion_code: 'C1', scale_value: 2, description: 'Ringan' },
+  { id: 3, criterion_id: 1, criterion_code: 'C1', scale_value: 3, description: 'Sedang' },
+  { id: 4, criterion_id: 1, criterion_code: 'C1', scale_value: 4, description: 'Berat' },
+  { id: 5, criterion_id: 1, criterion_code: 'C1', scale_value: 5, description: 'Kritis/tidak berfungsi' },
+  { id: 6, criterion_id: 2, criterion_code: 'C2', scale_value: 1, description: '< 1 tahun' },
+  { id: 7, criterion_id: 2, criterion_code: 'C2', scale_value: 2, description: '1–2 tahun' },
+  { id: 8, criterion_id: 2, criterion_code: 'C2', scale_value: 3, description: '3–4 tahun' },
+  { id: 9, criterion_id: 2, criterion_code: 'C2', scale_value: 4, description: '5–6 tahun' },
+  { id: 10, criterion_id: 2, criterion_code: 'C2', scale_value: 5, description: '> 6 tahun' },
 ];
 
 const initialDevices = [
@@ -280,7 +293,6 @@ const initialRepairs = [
   },
 ];
 
-// Local state loader helper
 function getStoredState(key, fallback) {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_PREFIX + key);
@@ -315,7 +327,14 @@ async function handleMockRequest(url, init = {}) {
   };
 
   // 1. Settings & Branding
-  if (cleanUrl === '/api/v1/settings' || cleanUrl === '/api/v1/settings/public-branding') {
+  if (
+    cleanUrl === '/api/v1/settings' ||
+    cleanUrl === '/api/v1/settings/public-branding' ||
+    cleanUrl.startsWith('/api/v1/settings/')
+  ) {
+    if (method === 'POST' || method === 'PUT') {
+      return mockResponse({ success: true, message: 'Pengaturan berhasil disimpan' });
+    }
     const settings = getStoredState('settings', initialSettings);
     return mockResponse({ success: true, data: settings });
   }
@@ -336,7 +355,7 @@ async function handleMockRequest(url, init = {}) {
   if (cleanUrl === '/api/v1/auth/login' && method === 'POST') {
     let body = {};
     try {
-      body = JSON.parse(init.body || '{}');
+      body = typeof init.body === 'string' ? JSON.parse(init.body) : init.body || {};
     } catch {
       body = {};
     }
@@ -376,29 +395,59 @@ async function handleMockRequest(url, init = {}) {
     return mockResponse({ success: true, message: 'Berhasil keluar' });
   }
 
-  // 5. Dashboard Stats
+  // 5. Dashboard Stats (Exact match to DashboardView.jsx expectations)
   if (cleanUrl === '/api/v1/dashboard/stats') {
     return mockResponse({
       success: true,
       data: {
-        total_devices: 6,
-        active_devices: 2,
-        under_repair_devices: 1,
-        need_attention_devices: 3,
-        condition_distribution: [
-          { status: 'Baik', count: 2, percentage: '33.3' },
-          { status: 'Rusak Ringan', count: 1, percentage: '16.7' },
-          { status: 'Rusak Berat', count: 2, percentage: '33.3' },
-          { status: 'Perlu Perhatian', count: 1, percentage: '16.7' },
-        ],
-        priority_distribution: [
-          { priority_band: 'Tinggi', count: 2, percentage: '33.3' },
-          { priority_band: 'Sedang', count: 4, percentage: '66.7' },
-          { priority_band: 'Rendah', count: 0, percentage: '0.0' },
-        ],
-        active_period: { id: 1, name: 'Penilaian Demo Oktober 2026', is_active: 1 },
-        recent_saw_runs: [
-          { id: 1, run_at: '2026-10-19T10:00:00Z', total_evaluated: 6, run_by_name: 'Admin Demo' },
+        devices: {
+          total: 6,
+          conditions: { baik: 2, rusak_ringan: 2, rusak_berat: 2 },
+          operational: { aktif: 3, dalam_perbaikan: 1, tidak_aktif: 2 },
+          categories: [
+            { id: 1, name: 'Keyboard', device_count: 1 },
+            { id: 2, name: 'Monitor', device_count: 2 },
+            { id: 3, name: 'Mouse', device_count: 2 },
+            { id: 4, name: 'Printer', device_count: 1 },
+          ],
+        },
+        latest_saw_run: {
+          id: 1,
+          run_at: '2026-10-19T10:00:00Z',
+          period_name: 'Penilaian Demo Oktober 2026',
+          total_devices: 6,
+          priority_bands: {
+            Tinggi: 2,
+            Sedang: 4,
+            Rendah: 0,
+          },
+        },
+        recommendations: {
+          pending: 2,
+          approved: 3,
+          rejected: 0,
+          deferred: 1,
+        },
+        repairs: {
+          counts: { SELESAI: 1, SEDANG_DIKERJAKAN: 1 },
+          total_estimated_cost: 100000,
+          total_actual_cost: 85000,
+        },
+        recent_activities: [
+          {
+            id: 1,
+            action: 'SAW_CALCULATION',
+            description: 'Perhitungan SAW periode Oktober 2026 selesai dijalankan.',
+            created_at: new Date().toISOString(),
+            user_name: 'Admin Demo',
+          },
+          {
+            id: 2,
+            action: 'DECISION_APPROVAL',
+            description: 'Persetujuan rekomendasi perbaikan untuk KB-001 oleh Pimpinan Lab.',
+            created_at: new Date().toISOString(),
+            user_name: 'Muhammad Ridwan Abdullah S.Kom',
+          },
         ],
       },
     });
@@ -419,29 +468,54 @@ async function handleMockRequest(url, init = {}) {
 
   // 8. Criteria & Scales
   if (cleanUrl === '/api/v1/criteria') {
-    return mockResponse({ success: true, data: initialCriteria });
+    return mockResponse({
+      success: true,
+      data: {
+        items: initialCriteria,
+        totalWeight: 1.0,
+        isValidTotal: true,
+      },
+    });
   }
   if (cleanUrl === '/api/v1/assessment-scales') {
     return mockResponse({
       success: true,
-      data: [
-        { criterion_code: 'C1', scale_value: 1, description: 'Ringan/tidak mengganggu' },
-        { criterion_code: 'C1', scale_value: 2, description: 'Ringan' },
-        { criterion_code: 'C1', scale_value: 3, description: 'Sedang' },
-        { criterion_code: 'C1', scale_value: 4, description: 'Berat' },
-        { criterion_code: 'C1', scale_value: 5, description: 'Kritis/tidak berfungsi' },
-      ],
+      data: initialScales,
     });
   }
 
-  // 9. Devices List
-  if (cleanUrl === '/api/v1/devices') {
+  // 9. Devices List & detail
+  if (cleanUrl.startsWith('/api/v1/devices')) {
     const devices = getStoredState('devices', initialDevices);
-    return mockResponse({ success: true, data: devices, total: devices.length });
+    if (method === 'POST') {
+      return mockResponse({ success: true, message: 'Perangkat berhasil ditambahkan' });
+    }
+    if (method === 'PUT' || method === 'PATCH') {
+      return mockResponse({ success: true, message: 'Perangkat berhasil diperbarui' });
+    }
+    if (method === 'DELETE') {
+      return mockResponse({ success: true, message: 'Perangkat berhasil dihapus' });
+    }
+    const singleId = cleanUrl.replace('/api/v1/devices/', '').replace('/damage-documentation', '');
+    if (singleId && !isNaN(Number(singleId))) {
+      const found = devices.find((d) => d.id === Number(singleId)) || devices[0];
+      return mockResponse({ success: true, data: { ...found, damage_documentation: [] } });
+    }
+    return mockResponse({
+      success: true,
+      data: {
+        items: devices,
+        total: devices.length,
+        totalPages: 1,
+      },
+    });
   }
 
   // 10. Assessments
   if (cleanUrl.startsWith('/api/v1/assessments')) {
+    if (method === 'POST') {
+      return mockResponse({ success: true, message: 'Penilaian berhasil disimpan' });
+    }
     return mockResponse({
       success: true,
       data: initialDevices.map((d) => ({
@@ -449,6 +523,7 @@ async function handleMockRequest(url, init = {}) {
         device_code: d.code,
         device_name: d.name,
         category_name: d.category_name,
+        status: 'assessed',
         values: { C1: 4, C2: 4, C3: 4, C4: 250000, C5: 4, C6: 4, C7: 4 },
       })),
     });
@@ -456,13 +531,39 @@ async function handleMockRequest(url, init = {}) {
 
   // 11. SAW Runs
   if (cleanUrl.startsWith('/api/v1/saw-runs')) {
+    if (method === 'POST') {
+      return mockResponse({
+        success: true,
+        message: 'Kalkulasi SAW berhasil dijalankan untuk 6 perangkat!',
+        data: { id: 1, device_count: 6 },
+      });
+    }
     const runResult = {
       id: 1,
       period_id: 1,
       run_at: '2026-10-19T10:00:00Z',
       run_by_name: 'Admin Demo',
       status: 'COMPLETED',
+      total_devices: 6,
       results: initialSawRanking,
+      matrices: {
+        decision_matrix: {
+          'KB-001': { C1: 5, C2: 4, C3: 5, C4: 280000, C5: 5, C6: 5, C7: 5 },
+          'MN-004': { C1: 4, C2: 5, C3: 4, C4: 450000, C5: 4, C6: 4, C7: 4 },
+          'MN-011': { C1: 4, C2: 4, C3: 4, C4: 350000, C5: 4, C6: 2, C7: 2 },
+          'PR-002': { C1: 3, C2: 3, C3: 3, C4: 180000, C5: 3, C6: 4, C7: 4 },
+          'MS-008': { C1: 2, C2: 2, C3: 1, C4: 80000, C5: 2, C6: 5, C7: 5 },
+          'MS-012': { C1: 1, C2: 2, C3: 1, C4: 60000, C5: 1, C6: 5, C7: 5 },
+        },
+        normalized_matrix: {
+          'KB-001': { C1: 1.0, C2: 0.8, C3: 1.0, C4: 0.214, C5: 1.0, C6: 1.0, C7: 1.0 },
+          'MN-004': { C1: 0.8, C2: 1.0, C3: 0.8, C4: 0.133, C5: 0.8, C6: 0.8, C7: 0.8 },
+          'MN-011': { C1: 0.8, C2: 0.8, C3: 0.8, C4: 0.171, C5: 0.8, C6: 0.4, C7: 0.4 },
+          'PR-002': { C1: 0.6, C2: 0.6, C3: 0.6, C4: 0.333, C5: 0.6, C6: 0.8, C7: 0.8 },
+          'MS-008': { C1: 0.4, C2: 0.4, C3: 0.2, C4: 0.75, C5: 0.4, C6: 1.0, C7: 1.0 },
+          'MS-012': { C1: 0.2, C2: 0.4, C3: 0.2, C4: 1.0, C5: 0.2, C6: 1.0, C7: 1.0 },
+        },
+      },
     };
     if (cleanUrl === '/api/v1/saw-runs' && method === 'GET') {
       return mockResponse({ success: true, data: [runResult] });
@@ -472,11 +573,17 @@ async function handleMockRequest(url, init = {}) {
 
   // 12. Recommendations
   if (cleanUrl.startsWith('/api/v1/recommendations')) {
+    if (method === 'POST') {
+      return mockResponse({ success: true, message: 'Keputusan berhasil disimpan' });
+    }
     return mockResponse({ success: true, data: initialSawRanking });
   }
 
   // 13. Repair History
   if (cleanUrl.startsWith('/api/v1/repair-history')) {
+    if (method === 'POST' || method === 'PUT') {
+      return mockResponse({ success: true, message: 'Data perbaikan berhasil disimpan' });
+    }
     return mockResponse({ success: true, data: initialRepairs });
   }
 
@@ -568,8 +675,12 @@ async function handleMockRequest(url, init = {}) {
     }
   }
 
-  // 15. Activity logs & Notifications
-  if (cleanUrl.startsWith('/api/v1/activity-logs') || cleanUrl.startsWith('/api/v1/notifications')) {
+  // 15. Activity logs, Users & Notifications
+  if (
+    cleanUrl.startsWith('/api/v1/activity-logs') ||
+    cleanUrl.startsWith('/api/v1/notifications') ||
+    cleanUrl.startsWith('/api/v1/users')
+  ) {
     return mockResponse({
       success: true,
       data: [
@@ -589,7 +700,7 @@ async function handleMockRequest(url, init = {}) {
     return mockResponse({ success: true, data: [] });
   }
 
-  // Fallback generic response
+  // Generic fallback
   return mockResponse({ success: true, data: [] });
 }
 
@@ -604,17 +715,31 @@ window.fetch = async (input, init = {}) => {
     return originalFetch(input, init);
   }
 
+  // CRITICAL FIX FOR VERCEL:
+  // When running on Vercel or any public static hosting (non-localhost),
+  // there is NO backend server listening at /api/v1. Vercel returns HTTP 405 or 404
+  // with an empty body, causing res.json() to fail with "Unexpected end of JSON input".
+  // Therefore, all /api/v1 routes on non-localhost domains MUST be resolved directly by handleMockRequest!
+  const isStandaloneDomain =
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1';
+
+  if (isStandaloneDomain) {
+    return await handleMockRequest(url, init);
+  }
+
+  // On localhost, attempt connecting to local Express backend first
   try {
     const response = await originalFetch(input, init);
-    // If backend is running and responded with JSON, use real response
     const contentType = response.headers.get('content-type') || '';
-    if (response.status !== 404 || contentType.includes('application/json')) {
+    if (contentType.includes('application/json')) {
       return response;
     }
-    // On Vercel static hosting, missing backend returns 404 HTML: fall back to mock
+    // If backend returned HTML or empty, fall back to mock
     return await handleMockRequest(url, init);
-  } catch (err) {
-    // Backend offline / network failed: fall back to mock
+  } catch {
+    // Backend offline / connection refused on localhost
     return await handleMockRequest(url, init);
   }
 };
