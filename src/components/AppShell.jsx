@@ -13,6 +13,7 @@ import {
   Lightbulb,
   FileText,
   Users,
+  UserCheck,
   ScrollText,
   Settings,
   LogOut,
@@ -43,6 +44,14 @@ export const AppShell = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Safety guard: only allow navigation to active 50% milestone modules
+  const handleDashboardNavigate = (menu) => {
+    const allowed = ['dashboard', 'devices', 'damage-docs', 'repair-history', 'criteria', 'scale-guides', 'users', 'profile'];
+    if (allowed.includes(menu)) {
+      setActiveMenu(menu);
+    }
+  };
 
   // Dynamic branding state (Title, Institution, and Logo)
   const [branding, setBranding] = useState({
@@ -87,6 +96,7 @@ export const AppShell = () => {
   }, [token]);
 
   // RBAC Navigation Configuration conforming to SOT/PRD.md Section 4 & SOT/UI-GUIDELINE.md Section 4
+  // Only modules completed for the 50% milestone demo are shown
   const navigationGroups = [
     {
       group: 'Ringkasan',
@@ -107,23 +117,13 @@ export const AppShell = () => {
       items: [
         { id: 'criteria', label: 'Kriteria & Bobot', icon: Sliders, roles: ['admin', 'pimpinan'] },
         { id: 'scale-guides', label: 'Skala Penilaian', icon: Award, roles: ['admin', 'pimpinan', 'teknisi'] },
-        { id: 'assessments', label: 'Penilaian Perangkat', icon: ClipboardList, roles: ['admin', 'pimpinan', 'teknisi'] },
-        { id: 'saw-results', label: 'Hasil & Peringkat', icon: BarChart3, roles: ['admin', 'pimpinan', 'teknisi'] },
-        { id: 'recommendations', label: 'Rekomendasi Keputusan', icon: Lightbulb, roles: ['admin', 'pimpinan', 'teknisi'] },
-      ],
-    },
-    {
-      group: 'Pelaporan',
-      items: [
-        { id: 'reports', label: 'Laporan', icon: FileText, roles: ['admin', 'pimpinan'] },
       ],
     },
     {
       group: 'Administrasi',
       items: [
         { id: 'users', label: 'Manajemen Pengguna', icon: Users, roles: ['admin'] },
-        { id: 'activity-logs', label: 'Log Aktivitas', icon: ScrollText, roles: ['admin', 'pimpinan'] },
-        { id: 'settings', label: 'Pengaturan Sistem', icon: Settings, roles: ['admin'] },
+        { id: 'profile', label: 'Profil Saya', icon: UserCheck, roles: ['teknisi', 'pimpinan'] },
       ],
     },
   ];
@@ -150,14 +150,14 @@ export const AppShell = () => {
   };
 
   return (
-    <div className="app-shell-root" style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--canvas-soft)' }}>
+    <div className="app-shell-root" style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
       {/* Sidebar Navigation (248px desktop conforming to SOT/UI-GUIDELINE.md) */}
       <aside
         className="no-print"
         style={{
           width: '248px',
-          backgroundColor: 'var(--brand-forest)',
-          color: 'var(--base-white)',
+          backgroundColor: 'var(--primary-navy)',
+          color: 'var(--surface-white)',
           display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
@@ -209,7 +209,7 @@ export const AppShell = () => {
             ) : null}
             <Server
               size={20}
-              color="var(--base-white)"
+              color="var(--accent-cyan)"
               style={{ display: branding.logo_url ? 'none' : 'block' }}
             />
           </div>
@@ -218,7 +218,7 @@ export const AppShell = () => {
               style={{
                 fontSize: '15px',
                 fontWeight: 700,
-                color: 'var(--base-white)',
+                color: 'var(--surface-white)',
                 lineHeight: 1.2,
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
@@ -227,7 +227,7 @@ export const AppShell = () => {
             >
               {branding.app_title || 'SPK Periferal'}
             </h1>
-            <p style={{ fontSize: '11px', color: 'var(--surface-sage)', opacity: 0.85, marginTop: '2px' }}>
+            <p style={{ fontSize: '11px', color: '#94A3B8', opacity: 0.9, marginTop: '2px' }}>
               {branding.institution_name || 'Ponpes Al Ihsan Baron'}
             </p>
           </div>
@@ -251,8 +251,7 @@ export const AppShell = () => {
                   fontSize: '11px',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  color: 'var(--surface-sage)',
-                  opacity: 0.65,
+                  color: '#94A3B8',
                   letterSpacing: '0.04em',
                   padding: '0 8px 6px 8px',
                 }}
@@ -278,10 +277,11 @@ export const AppShell = () => {
                         borderRadius: 'var(--radius-input)',
                         fontSize: '13px',
                         fontWeight: isActive ? 600 : 400,
-                        backgroundColor: isActive ? 'rgba(255, 255, 255, 0.16)' : 'transparent',
-                        color: 'var(--base-white)',
+                        backgroundColor: isActive ? 'var(--electric-blue)' : 'transparent',
+                        color: 'var(--surface-white)',
                         textAlign: 'left',
                         width: '100%',
+                        boxShadow: isActive ? '0 2px 8px rgba(59, 130, 246, 0.35)' : 'none',
                       }}
                       onMouseEnter={(e) => {
                         if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
@@ -290,7 +290,7 @@ export const AppShell = () => {
                         if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
                       }}
                     >
-                      <Icon size={16} color="var(--surface-sage)" style={{ opacity: isActive ? 1 : 0.8 }} />
+                      <Icon size={16} color={isActive ? '#FFFFFF' : '#94A3B8'} style={{ opacity: isActive ? 1 : 0.85, flexShrink: 0 }} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {item.label}
                       </span>
@@ -307,23 +307,38 @@ export const AppShell = () => {
           style={{
             padding: '16px',
             borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-            backgroundColor: 'rgba(0, 0, 0, 0.12)',
+            backgroundColor: 'rgba(0, 0, 0, 0.15)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+          <div
+            onClick={() => setActiveMenu('profile')}
+            title="Klik untuk mengelola Profil Saya"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '12px',
+              cursor: 'pointer',
+              padding: '6px 8px',
+              borderRadius: '8px',
+              transition: 'background-color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
             <div
               style={{
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: 'rgba(59, 130, 246, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 700,
                 fontSize: '13px',
-                color: 'var(--base-white)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+                color: 'var(--surface-white)',
+                border: '1px solid rgba(59, 130, 246, 0.5)',
               }}
             >
               {user?.full_name?.charAt(0) || 'U'}
@@ -333,7 +348,7 @@ export const AppShell = () => {
                 style={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color: 'var(--base-white)',
+                  color: 'var(--surface-white)',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
@@ -341,7 +356,7 @@ export const AppShell = () => {
               >
                 {user?.full_name}
               </div>
-              <div style={{ fontSize: '11px', color: 'var(--surface-sage)', opacity: 0.8 }}>
+              <div style={{ fontSize: '11px', color: '#94A3B8' }}>
                 @{user?.username}
               </div>
             </div>
@@ -356,7 +371,7 @@ export const AppShell = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                color: 'var(--surface-sage)',
+                color: '#94A3B8',
                 fontSize: '12px',
                 padding: '4px 8px',
                 borderRadius: '6px',
@@ -378,8 +393,8 @@ export const AppShell = () => {
           className="no-print"
           style={{
             height: '60px',
-            backgroundColor: 'var(--base-white)',
-            borderBottom: '1px solid var(--border-soft)',
+            backgroundColor: 'var(--primary-navy)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
@@ -390,9 +405,9 @@ export const AppShell = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '13px', color: 'var(--text-gray-green)' }}>Navigasi</span>
-            <span style={{ fontSize: '13px', color: 'var(--text-gray-green)' }}>/</span>
-            <strong style={{ fontSize: '14px', color: 'var(--brand-forest)' }}>
+            <span style={{ fontSize: '13px', color: '#94A3B8' }}>Navigasi</span>
+            <span style={{ fontSize: '13px', color: '#64748B' }}>/</span>
+            <strong style={{ fontSize: '14px', color: 'var(--surface-white)', fontWeight: 600 }}>
               {{
                 dashboard: 'Dashboard',
                 devices: 'Data Perangkat',
@@ -425,10 +440,10 @@ export const AppShell = () => {
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: activeMenu === 'notifications' ? 'var(--surface-sage)' : 'transparent',
-                border: '1px solid var(--border-soft)',
+                backgroundColor: activeMenu === 'notifications' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
                 cursor: 'pointer',
-                color: activeMenu === 'notifications' ? 'var(--brand-forest)' : 'var(--text-primary)',
+                color: activeMenu === 'notifications' ? 'var(--accent-cyan)' : 'var(--surface-white)',
               }}
             >
               <Bell size={16} />
@@ -460,16 +475,16 @@ export const AppShell = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: 'var(--surface-sage)',
-                color: 'var(--brand-forest)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: '#F1F5F9',
                 padding: '5px 12px',
                 borderRadius: 'var(--radius-badge)',
                 fontSize: '12px',
                 fontWeight: 600,
-                border: '1px solid var(--border-soft)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
               }}
             >
-              <Calendar size={13} />
+              <Calendar size={13} color="var(--accent-cyan)" />
               <span>Periode 2026 / Ganjil</span>
             </div>
 
@@ -478,13 +493,13 @@ export const AppShell = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                color: '#065f46',
+                backgroundColor: 'rgba(34, 211, 238, 0.14)',
+                color: 'var(--accent-cyan)',
                 padding: '6px 14px',
                 borderRadius: 'var(--radius-badge)',
                 fontSize: '12px',
                 fontWeight: 600,
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                border: '1px solid rgba(34, 211, 238, 0.32)',
               }}
             >
               <span
@@ -492,18 +507,18 @@ export const AppShell = () => {
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  backgroundColor: '#10b981',
-                  boxShadow: '0 0 0 2px rgba(16, 185, 129, 0.3)',
+                  backgroundColor: 'var(--accent-cyan)',
+                  boxShadow: '0 0 0 2px rgba(34, 211, 238, 0.35)',
                   display: 'inline-block',
                 }}
               />
-              <span>Sistem Aktif • v1.0</span>
+              <span>Sistem Aktif</span>
             </div>
           </div>
         </header>
 
         {/* Main Body */}
-        <main className="container" style={{ flex: 1 }}>
+        <main className="container" style={{ flex: 1, width: '100%' }}>
           {activeMenu === 'devices' ? (
             <DeviceManagement />
           ) : activeMenu === 'damage-docs' ? (
@@ -529,9 +544,11 @@ export const AppShell = () => {
           ) : activeMenu === 'activity-logs' ? (
             <ActivityLogsView />
           ) : activeMenu === 'users' ? (
-            <UserManagement />
+            <UserManagement defaultTab="all-users" />
+          ) : activeMenu === 'profile' ? (
+            <UserManagement defaultTab="profile" />
           ) : activeMenu === 'dashboard' ? (
-            <DashboardView onNavigate={(menu) => setActiveMenu(menu)} />
+            <DashboardView onNavigate={handleDashboardNavigate} />
           ) : (
             <div className="card" style={{ padding: '48px 24px', textAlign: 'center' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>

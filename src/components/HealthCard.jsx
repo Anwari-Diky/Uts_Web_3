@@ -26,10 +26,10 @@ export const HealthCard = ({ healthData, loading, error, onRefresh }) => {
       >
         <div>
           <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Status Koneksi Layanan (GET /api/v1/health)
+            Status Koneksi Layanan
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '2px' }}>
-            Pemantauan langsung kesehatan backend Express dan koneksi pool MySQL.
+            Pemantauan status server backend dan database.
           </p>
         </div>
 

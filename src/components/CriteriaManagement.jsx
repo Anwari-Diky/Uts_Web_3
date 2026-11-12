@@ -417,96 +417,91 @@ export const CriteriaManagement = ({ defaultTab = 'criteria' }) => {
   return (
     <div>
       {/* Top Header */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
-          Konfigurasi Model SAW & Panduan Penilaian
-        </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '2px' }}>
-          Manajemen kriteria Simple Additive Weighting (SAW), kontrol total bobot 1,00, rubrik operasional, dan periode penilaian.
-        </p>
-      </div>
+      {activeTab === 'system-settings' ? (
+        <div style={{ marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Pengaturan Sistem &amp; Pejabat
+          </h2>
+          <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '2px' }}>
+            Pengaturan identitas laboratorium, logo instansi, dan pejabat penandatangan laporan resmi.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div style={{ marginBottom: '20px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              Konfigurasi Model SAW &amp; Panduan Penilaian
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '2px' }}>
+              Manajemen kriteria Simple Additive Weighting (SAW), kontrol total bobot 1,00, rubrik operasional, dan periode penilaian.
+            </p>
+          </div>
 
-      {/* Tabs Navigation */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '1px solid var(--border-soft)',
-          marginBottom: '20px',
-        }}
-      >
-        <button
-          onClick={() => setActiveTab('criteria')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            fontSize: '13px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'criteria' ? '2px solid var(--brand-forest)' : '2px solid transparent',
-            color: activeTab === 'criteria' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
-            backgroundColor: 'transparent',
-          }}
-        >
-          <Sliders size={16} />
-          Kriteria & Bobot SAW
-        </button>
+          {/* Tabs Navigation (Hanya Kriteria, Skala, dan Periode) */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              borderBottom: '1px solid var(--border-soft)',
+              marginBottom: '20px',
+            }}
+          >
+            <button
+              onClick={() => setActiveTab('criteria')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                fontSize: '13px',
+                fontWeight: 600,
+                borderBottom: activeTab === 'criteria' ? '2px solid var(--electric-blue)' : '2px solid transparent',
+                color: activeTab === 'criteria' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
+                backgroundColor: 'transparent',
+              }}
+            >
+              <Sliders size={16} />
+              Kriteria &amp; Bobot SAW
+            </button>
 
-        <button
-          onClick={() => setActiveTab('scales')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            fontSize: '13px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'scales' ? '2px solid var(--brand-forest)' : '2px solid transparent',
-            color: activeTab === 'scales' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
-            backgroundColor: 'transparent',
-          }}
-        >
-          <Award size={16} />
-          Panduan Rubrik Skala (1-5)
-        </button>
+            <button
+              onClick={() => setActiveTab('scales')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                fontSize: '13px',
+                fontWeight: 600,
+                borderBottom: activeTab === 'scales' ? '2px solid var(--electric-blue)' : '2px solid transparent',
+                color: activeTab === 'scales' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
+                backgroundColor: 'transparent',
+              }}
+            >
+              <Award size={16} />
+              Panduan Rubrik Skala (1-5)
+            </button>
 
-        <button
-          onClick={() => setActiveTab('periods')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            fontSize: '13px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'periods' ? '2px solid var(--brand-forest)' : '2px solid transparent',
-            color: activeTab === 'periods' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
-            backgroundColor: 'transparent',
-          }}
-        >
-          <Calendar size={16} />
-          Periode Penilaian
-        </button>
-
-        <button
-          onClick={() => setActiveTab('system-settings')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            fontSize: '13px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'system-settings' ? '2px solid var(--brand-forest)' : '2px solid transparent',
-            color: activeTab === 'system-settings' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
-            backgroundColor: 'transparent',
-          }}
-        >
-          <SettingsIcon size={16} />
-          Pengaturan Sistem &amp; Pejabat
-        </button>
-      </div>
+            <button
+              onClick={() => setActiveTab('periods')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                fontSize: '13px',
+                fontWeight: 600,
+                borderBottom: activeTab === 'periods' ? '2px solid var(--electric-blue)' : '2px solid transparent',
+                color: activeTab === 'periods' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
+                backgroundColor: 'transparent',
+              }}
+            >
+              <Calendar size={16} />
+              Periode Penilaian
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Tab 1: Kriteria & Bobot */}
       {activeTab === 'criteria' && (
@@ -538,7 +533,7 @@ export const CriteriaManagement = ({ defaultTab = 'criteria' }) => {
                   {isValidTotal ? 'Valid (Sesuai Aturan SAW)' : 'Tidak Valid (Harus Tepat 1,00)'}
                 </strong>
                 <p style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '2px' }}>
-                  Sesuai ketentuan <code>SOT/PRD.md</code>, perhitungan SAW hanya diizinkan berjalan jika jumlah bobot seluruh kriteria tepat bernilai 1,00.
+                  Perhitungan SAW hanya dapat diproses jika total bobot bernilai tepat 100% (1,00).
                 </p>
               </div>
             </div>
@@ -709,10 +704,10 @@ export const CriteriaManagement = ({ defaultTab = 'criteria' }) => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
               <Info size={16} color="var(--brand-forest)" />
-              <strong style={{ color: 'var(--brand-forest)' }}>Catatan Penting SOT PRD Bagian 6.1:</strong>
+              <strong style={{ color: 'var(--brand-forest)' }}>Penetapan Bobot Kriteria:</strong>
             </div>
-            <p style={{ lineHeight: 1.5 }}>
-              Pada draft awal terdapat ambigu C7 "Kelayakan Perbaikan = 0.5". Karena enam bobot lain berjumlah 0,95, maka paket SOT secara resmi menggunakan <strong>C7 = 0,05</strong> agar jumlah tepat 1,00. Nilai ini tersimpan pada sistem dan dapat diubah secara aman oleh Admin selama total akhir tetap 1,00.
+            <p style={{ lineHeight: 1.5, margin: 0 }}>
+              Bobot seluruh kriteria dapat dikonfigurasi secara mandiri oleh Admin selama total akhirnya bernilai tepat 1,00.
             </p>
           </div>
         </div>
@@ -733,11 +728,10 @@ export const CriteriaManagement = ({ defaultTab = 'criteria' }) => {
             }}
           >
             <strong style={{ color: 'var(--brand-forest)', display: 'block', marginBottom: '4px' }}>
-              Aturan Khusus Kriteria Biaya (C4 — Estimasi Biaya Perbaikan):
+              Kriteria Biaya (C4 — Estimasi Biaya Perbaikan):
             </strong>
-            <p style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>
-              Kriteria C4 diisi nominal Rupiah aktual (Rp 0 ke atas), bertipe <strong>Cost</strong> (biaya lebih rendah dinormalisasi lebih tinggi).
-              Jika nilai minimum adalah 0, biaya Rp 0 mendapat normalisasi 1,0 dan biaya positif dinormalisasi proporsional untuk mencegah pembagian dengan nol.
+            <p style={{ color: 'var(--text-primary)', lineHeight: 1.5, margin: 0 }}>
+              Kriteria C4 bertipe <strong>Cost</strong> (estimasi biaya lebih rendah dinormalisasi lebih tinggi). Biaya Rp 0 dinormalisasi aman bernilai 1,0.
             </p>
           </div>
 
@@ -1052,7 +1046,7 @@ export const CriteriaManagement = ({ defaultTab = 'criteria' }) => {
                     </label>
                     <div
                       style={{
-                        backgroundColor: '#205B43',
+                        backgroundColor: 'var(--primary-navy)',
                         padding: '18px 16px',
                         borderRadius: '10px',
                         display: 'flex',

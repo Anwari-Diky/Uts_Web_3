@@ -290,11 +290,11 @@ export const DamageDocumentationView = () => {
                 width: '38px',
                 height: '38px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(32, 91, 67, 0.12)',
+                backgroundColor: 'var(--electric-blue-light)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--brand-forest)',
+                color: 'var(--electric-blue)',
               }}
             >
               <Camera size={22} />
@@ -304,7 +304,7 @@ export const DamageDocumentationView = () => {
                 Dokumentasi Kerusakan Perangkat
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', margin: '3px 0 0 0' }}>
-                Galeri visual dan catatan inspeksi fisik kerusakan perangkat laboratorium untuk transparansi penilaian SAW.
+                Foto dan catatan kondisi kerusakan fisik perangkat laboratorium.
               </p>
             </div>
           </div>
@@ -332,7 +332,7 @@ export const DamageDocumentationView = () => {
               style={{ padding: '9px 16px', fontSize: '13px' }}
             >
               <Plus size={16} />
-              <span>Unggah Dokumentasi Baru</span>
+              <span>Unggah Foto</span>
             </button>
           )}
         </div>
@@ -676,7 +676,7 @@ export const DamageDocumentationView = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '20px',
           }}
         >
@@ -689,7 +689,7 @@ export const DamageDocumentationView = () => {
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
               }}
             >
               {/* Photo Box */}
@@ -698,29 +698,75 @@ export const DamageDocumentationView = () => {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  height: '210px',
-                  backgroundColor: '#1E293B',
+                  height: '220px',
+                  backgroundColor: '#0B1120',
                   cursor: 'pointer',
                   overflow: 'hidden',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
+                title="Klik untuk melihat foto dalam resolusi penuh"
               >
+                {/* Ambient Blurred Background from Photo */}
+                <img
+                  src={doc.storage_path}
+                  alt=""
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: '-12px',
+                    width: 'calc(100% + 24px)',
+                    height: 'calc(100% + 24px)',
+                    objectFit: 'cover',
+                    filter: 'blur(16px) brightness(0.6) saturate(1.2)',
+                    opacity: 0.6,
+                    transform: 'scale(1.15)',
+                    pointerEvents: 'none',
+                  }}
+                />
+
+                {/* Crisp Centered Full Photo (No Crop) */}
                 <img
                   src={doc.storage_path}
                   alt={doc.caption || doc.device_name || 'Dokumentasi kerusakan'}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    position: 'relative',
+                    zIndex: 1,
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    objectFit: 'contain',
+                    padding: '8px',
                     transition: 'transform 0.25s ease',
                   }}
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentNode.style.backgroundColor = '#334155';
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.previousElementSibling) {
+                      e.currentTarget.previousElementSibling.style.display = 'none';
+                    }
+                    const fallback = e.currentTarget.nextElementSibling;
+                    if (fallback) fallback.style.display = 'flex';
                   }}
                 />
+
+                {/* Fallback Placeholder */}
+                <div
+                  style={{
+                    display: 'none',
+                    position: 'relative',
+                    zIndex: 1,
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    color: 'var(--text-gray-green)',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                >
+                  <Camera size={28} opacity={0.6} />
+                  <span style={{ fontSize: '11.5px' }}>Foto tidak dapat dimuat</span>
+                </div>
 
                 {/* Badges on Top of Photo */}
                 <div
@@ -739,9 +785,10 @@ export const DamageDocumentationView = () => {
                     style={{
                       backgroundColor: 'rgba(15, 23, 42, 0.85)',
                       color: '#FFFFFF',
-                      backdropFilter: 'blur(4px)',
+                      backdropFilter: 'blur(6px)',
                       fontWeight: 600,
                       fontSize: '11px',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.25)',
                     }}
                   >
                     {doc.device_code}
@@ -755,15 +802,17 @@ export const DamageDocumentationView = () => {
                     position: 'absolute',
                     bottom: '10px',
                     right: '10px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.8)',
                     color: '#FFF',
                     borderRadius: '6px',
-                    padding: '4px 8px',
+                    padding: '5px 9px',
                     fontSize: '11px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '5px',
-                    backdropFilter: 'blur(4px)',
+                    backdropFilter: 'blur(6px)',
+                    zIndex: 2,
+                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.25)',
                   }}
                 >
                   <Maximize2 size={12} />
@@ -992,34 +1041,56 @@ export const DamageDocumentationView = () => {
               </button>
             </div>
 
-            {/* Modal Content: Split Photo and Metadata */}
+            {/* Modal Content: Split Photo and Metadata (Responsive Grid) */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'minmax(300px, 1.4fr) minmax(260px, 1fr)',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                 flex: 1,
                 overflowY: 'auto',
               }}
             >
-              {/* Photo View */}
+              {/* Photo View with Ambient Backdrop */}
               <div
                 style={{
-                  backgroundColor: '#0F172A',
+                  position: 'relative',
+                  backgroundColor: '#0B1120',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '16px',
+                  padding: '20px',
                   minHeight: '360px',
+                  overflow: 'hidden',
                 }}
               >
+                {/* Ambient Blurred Background */}
+                <img
+                  src={previewDoc.storage_path}
+                  alt=""
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: '-20px',
+                    width: 'calc(100% + 40px)',
+                    height: 'calc(100% + 40px)',
+                    objectFit: 'cover',
+                    filter: 'blur(24px) brightness(0.4) saturate(1.2)',
+                    opacity: 0.5,
+                    pointerEvents: 'none',
+                  }}
+                />
+
                 <img
                   src={previewDoc.storage_path}
                   alt={previewDoc.caption || 'Foto Dokumentasi Kerusakan'}
                   style={{
+                    position: 'relative',
+                    zIndex: 1,
                     maxWidth: '100%',
                     maxHeight: '65vh',
                     objectFit: 'contain',
-                    borderRadius: '4px',
+                    borderRadius: '6px',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.45)',
                   }}
                 />
               </div>

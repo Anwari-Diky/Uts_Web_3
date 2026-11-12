@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabel Progres Proyek 50% - SPK Periferal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #0F172A;
+    }
+
+    .slide-canvas {
+      width: 1200px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 44px 48px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient top accent strip */
+    .top-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #3B82F6 0%, #22D3EE 50%, #10B981 100%);
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 26px;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background-color: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #2563EB;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #2563EB;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .meta-badge {
+      text-align: right;
+      padding: 8px 16px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+    }
+
+    .meta-badge .label {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #64748B;
+      letter-spacing: 0.04em;
+    }
+
+    .meta-badge .value {
+      font-size: 18px;
+      font-weight: 800;
+      color: #2563EB;
+      margin-top: 2px;
+    }
+
+    /* Table Styling */
+    .table-container {
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+      margin-bottom: 22px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead th {
+      background-color: #F8FAFC;
+      padding: 13px 18px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #F1F5F9;
+      transition: background-color 0.15s ease;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #FAFAFC;
+    }
+
+    tbody td {
+      padding: 13px 18px;
+      font-size: 13px;
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .col-no {
+      width: 44px;
+      font-weight: 700;
+      color: #64748B;
+      text-align: center;
+    }
+
+    .col-module {
+      width: 280px;
+    }
+
+    .module-name {
+      font-weight: 700;
+      color: #0F172A;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .col-progress {
+      width: 175px;
+    }
+
+    .progress-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 7px;
+      background-color: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%);
+    }
+
+    .progress-bar-fill.success {
+      background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+    }
+
+    .badge-percent {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background-color: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .badge-percent.success {
+      background-color: #DCFCE7;
+      color: #15803D;
+      border-color: #BBF7D0;
+    }
+
+    .col-desc {
+      line-height: 1.45;
+      color: #475569;
+      font-size: 12.5px;
+    }
+
+    /* Bottom Info Card */
+    .bottom-card {
+      background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+      border: 1px solid #BFDBFE;
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justifyContent: space-between;
+      gap: 20px;
+    }
+
+    .bottom-card .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tag-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #2563EB;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .bottom-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1E3A8A;
+    }
+
+    .bottom-desc {
+      font-size: 11.5px;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    .status-pill {
+      background: #2563EB;
+      color: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-canvas">
+    <div class="top-accent"></div>
+
+    <!-- Header Row -->
+    <div class="header-row">
+      <div>
+        <div class="pill-badge">
+          <span class="pulse-dot"></span>
+          Metode Pengembangan: RAD (Rapid Application Development)
+        </div>
+        <h1>Progress Perkembangan Proyek — Milestone 50%</h1>
+        <p class="subtitle">SPK Penentuan Kelayakan Upgrade & Perbaikan Perangkat Periferal Lab Komputer • Ponpes Al Ihsan Baron</p>
+      </div>
+      <div class="meta-badge">
+        <div class="label">Total Capaian Tahap 1</div>
+        <div class="value">50% Selesai</div>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-no">No</th>
+            <th class="col-module">Modul yang Dilaporkan</th>
+            <th class="col-progress">Progres Capaian</th>
+            <th class="col-desc">Penjelasan Fungsionalitas Modul</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-no">1</td>
+            <td class="col-module">
+              <div class="module-name">Autentikasi Hak Akses</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <span class="badge-percent">70%</span>
+              </div>
+            </td>
+            <td class="col-desc">Login aman berbasis token JWT dan enkripsi PBKDF2 untuk 3 peran (Admin, Teknisi, Pimpinan).</td>
+          </tr>
+          <tr>
+            <td class="col-no">2</td>
+            <td class="col-module">
+              <div class="module-name">Manajemen Dashboard</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 75%;"></div>
+                </div>
+                <span class="badge-percent">75%</span>
+              </div>
+            </td>
+            <td class="col-desc">Tampilan analitik kondisi periferal (Baik, Rusak Ringan, Rusak Berat) dan visualisasi grafik sebaran lab.</td>
+          </tr>
+          <tr>
+            <td class="col-no">3</td>
+            <td class="col-module">
+              <div class="module-name">Manajemen Data Perangkat</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 80%;"></div>
+                </div>
+                <span class="badge-percent">80%</span>
+              </div>
+            </td>
+            <td class="col-desc">Pencatatan aset, spesifikasi teknis, filter kategori, lokasi lab, dan pemantauan kondisi periferal.</td>
+          </tr>
+          <tr>
+            <td class="col-no">4</td>
+            <td class="col-module">
+              <div class="module-name">Riwayat & Dokumentasi Kerusakan</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 90%;"></div>
+                </div>
+                <span class="badge-percent">90%</span>
+              </div>
+            </td>
+            <td class="col-desc">Galeri foto fisik kerusakan, fitur lightbox zoom proporsional, serta pencatatan log pemeliharaan teknisi.</td>
+          </tr>
+          <tr>
+            <td class="col-no">5</td>
+            <td class="col-module">
+              <div class="module-name">Manajemen Kriteria SAW</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill success" style="width: 100%;"></div>
+                </div>
+                <span class="badge-percent success">100%</span>
+              </div>
+            </td>
+            <td class="col-desc">Penetapan 7 kriteria (C1–C7), penentuan sifat Benefit/Cost, serta validasi ketat total bobot wajib tepat 1,00.</td>
+          </tr>
+          <tr>
+            <td class="col-no">6</td>
+            <td class="col-module">
+              <div class="module-name">Skala Penilaian Perangkat</div>
+            </td>
+            <td class="col-progress">
+              <div class="progress-wrapper">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 85%;"></div>
+                </div>
+                <span class="badge-percent">85%</span>
+              </div>
+            </td>
+            <td class="col-desc">Rubrik panduan nilai skor 1–5 terstandarisasi untuk menjamin objektivitas pemeriksaan di lapangan.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Summary Card -->
+    <div class="bottom-card">
+      <div class="left">
+        <div class="tag-icon">⚡</div>
+        <div>
+          <div class="bottom-title">Rencana Tahap 2 — 50% Sisa (Iterasi Konstruksi Lanjutan & Cutover)</div>
+          <div class="bottom-desc">Form Penilaian Alternatif Periferal, Engine Kalkulasi Normalisasi SAW, Alur Rekomendasi Pimpinan, dan Ekspor Laporan Resmi PDF.</div>
+        </div>
+      </div>
+      <div class="status-pill">Siap Didemonstrasikan</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

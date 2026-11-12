@@ -436,14 +436,11 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <ClipboardList size={22} color="var(--brand-forest)" />
             <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
-              Penilaian & Engine SAW
+              Penilaian &amp; Perhitungan SAW
             </h2>
-            <span className="badge badge-success" style={{ fontSize: '12px' }}>
-              Fase 5 Aktif
-            </span>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '4px' }}>
-            Input penilaian teknisi berbasis 7 kriteria & kalkulasi deterministik metode SAW untuk pemeringkatan kelayakan.
+            Penilaian kondisi perangkat dan kalkulasi peringkat kelayakan metode SAW.
           </p>
         </div>
 
@@ -485,9 +482,9 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'assessments' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'assessments' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'assessments' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'assessments' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
@@ -499,8 +496,8 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
               fontSize: '11px',
               padding: '2px 7px',
               borderRadius: '10px',
-              backgroundColor: 'var(--surface-sage)',
-              color: 'var(--brand-forest)',
+              backgroundColor: 'var(--electric-blue-light)',
+              color: 'var(--electric-blue)',
             }}
           >
             {enrichedDevices.filter((d) => d.statusKey !== 'unassessed').length} / {devices.length}
@@ -517,9 +514,9 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'saw-results' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'saw-results' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'saw-results' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'saw-results' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
@@ -551,9 +548,9 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'matrices' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'matrices' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'matrices' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'matrices' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
@@ -926,7 +923,7 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
                     }}
                   >
                     <Shield size={16} />
-                    <span>Peran Pimpinan Lab memiliki akses peninjauan (View-Only). Input atau perubahan skor dikerjakan oleh Teknisi/Admin.</span>
+                    <span>Akses peninjauan (View-Only). Penilaian diinput oleh Teknisi atau Admin.</span>
                   </div>
                 )}
               </div>
@@ -958,7 +955,7 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <TrendingUp size={20} color="var(--brand-forest)" />
                 <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Eksekusi & Riwayat Perhitungan Algoritma SAW
+                  Kalkulasi &amp; Riwayat Peringkat SAW
                 </h3>
               </div>
               <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '4px' }}>
@@ -1298,7 +1295,7 @@ export const AssessmentAndSaw = ({ defaultTab = 'assessments' }) => {
               </h3>
             </div>
             <p style={{ fontSize: '12px', color: 'var(--text-gray-green)', marginBottom: '14px' }}>
-              Hasil normalisasi skala r_ij = x_ij / max(x_j) untuk benefit, dan r_ij = min(x_j) / x_ij untuk cost (dengan penanganan khusus nilai cost nol). Nilai preferensi V_i = ∑(w_j × r_ij).
+              Hasil normalisasi kriteria benefit &amp; cost serta perolehan total nilai preferensi (V).
             </p>
 
             {!currentRunDetail?.results ? (

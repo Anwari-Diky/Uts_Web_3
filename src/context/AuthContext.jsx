@@ -100,6 +100,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, [token]);
 
+  const updateUserSession = useCallback((updatedUser, newToken) => {
+    if (updatedUser) {
+      setUser(updatedUser);
+    }
+    if (newToken) {
+      localStorage.setItem('spk_token', newToken);
+      setToken(newToken);
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -110,6 +120,7 @@ export const AuthProvider = ({ children }) => {
         setAuthError,
         login,
         logout,
+        updateUserSession,
         isAuthenticated: !!user,
       }}
     >

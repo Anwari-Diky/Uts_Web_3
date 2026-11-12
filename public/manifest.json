@@ -1,0 +1,17 @@
+{
+  "short_name": "SPK Periferal",
+  "name": "SPK Periferal Lab Komputer - Ponpes Al Ihsan Baron",
+  "description": "Sistem Pendukung Keputusan Kelayakan Upgrade dan Perbaikan Perangkat Periferal Lab Komputer",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0B1120",
+  "theme_color": "#3B82F6",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}

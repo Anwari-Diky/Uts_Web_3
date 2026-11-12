@@ -5,8 +5,8 @@ export const Header = ({ isOnline }) => {
   return (
     <header
       style={{
-        backgroundColor: 'var(--brand-forest)',
-        color: 'var(--base-white)',
+        backgroundColor: 'var(--primary-navy)',
+        color: 'var(--surface-white)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
         padding: '16px 24px',
       }}
@@ -28,14 +28,14 @@ export const Header = ({ isOnline }) => {
               width: '42px',
               height: '42px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              backgroundColor: 'rgba(255, 255, 255, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
+              border: '1px solid rgba(34, 211, 238, 0.3)',
             }}
           >
-            <Server size={22} color="var(--base-white)" />
+            <Server size={22} color="var(--accent-cyan)" />
           </div>
           <div>
             <h1
@@ -44,7 +44,7 @@ export const Header = ({ isOnline }) => {
                 fontWeight: 600,
                 letterSpacing: '-0.01em',
                 lineHeight: 1.2,
-                color: 'var(--base-white)',
+                color: 'var(--surface-white)',
               }}
             >
               SPK Perangkat Periferal Lab Komputer
@@ -52,7 +52,7 @@ export const Header = ({ isOnline }) => {
             <p
               style={{
                 fontSize: '13px',
-                color: 'var(--surface-sage)',
+                color: '#94A3B8',
                 marginTop: '2px',
               }}
             >

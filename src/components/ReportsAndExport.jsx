@@ -302,11 +302,11 @@ export const ReportsAndExport = () => {
                   border: '1px solid #c8dcd0',
                 }}
               >
-                KOP Resmi Aktif
+                Dokumen Resmi
               </span>
             </div>
             <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '4px' }}>
-              Format surat resmi dengan KOP lembaga lengkap, logo resmi, pilihan orientasi Potret/Lanskap, dan kertas A4 atau F4 (Folio).
+              Pratinjau dan cetak dokumen resmi (A4/F4) atau ekspor data ke Excel (CSV).
             </p>
           </div>
 
@@ -454,7 +454,7 @@ export const ReportsAndExport = () => {
                     fontSize: '12px',
                     fontWeight: 600,
                     borderRadius: '6px',
-                    backgroundColor: paperSize === 'A4' ? 'var(--brand-forest)' : 'transparent',
+                    backgroundColor: paperSize === 'A4' ? 'var(--electric-blue)' : 'transparent',
                     color: paperSize === 'A4' ? '#ffffff' : 'var(--text-primary)',
                     boxShadow: paperSize === 'A4' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                   }}
@@ -469,7 +469,7 @@ export const ReportsAndExport = () => {
                     fontSize: '12px',
                     fontWeight: 600,
                     borderRadius: '6px',
-                    backgroundColor: paperSize === 'F4' ? 'var(--brand-forest)' : 'transparent',
+                    backgroundColor: paperSize === 'F4' ? 'var(--electric-blue)' : 'transparent',
                     color: paperSize === 'F4' ? '#ffffff' : 'var(--text-primary)',
                     boxShadow: paperSize === 'F4' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                   }}
@@ -493,7 +493,7 @@ export const ReportsAndExport = () => {
                     fontSize: '12px',
                     fontWeight: 600,
                     borderRadius: '6px',
-                    backgroundColor: orientation === 'portrait' ? 'var(--brand-forest)' : 'transparent',
+                    backgroundColor: orientation === 'portrait' ? 'var(--electric-blue)' : 'transparent',
                     color: orientation === 'portrait' ? '#ffffff' : 'var(--text-primary)',
                     boxShadow: orientation === 'portrait' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                   }}
@@ -508,7 +508,7 @@ export const ReportsAndExport = () => {
                     fontSize: '12px',
                     fontWeight: 600,
                     borderRadius: '6px',
-                    backgroundColor: orientation === 'landscape' ? 'var(--brand-forest)' : 'transparent',
+                    backgroundColor: orientation === 'landscape' ? 'var(--electric-blue)' : 'transparent',
                     color: orientation === 'landscape' ? '#ffffff' : 'var(--text-primary)',
                     boxShadow: orientation === 'landscape' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
                   }}
@@ -593,7 +593,7 @@ export const ReportsAndExport = () => {
                     width: '72px',
                     height: '72px',
                     borderRadius: '14px',
-                    backgroundColor: 'var(--brand-forest)',
+                    backgroundColor: 'var(--primary-navy)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -610,7 +610,7 @@ export const ReportsAndExport = () => {
                 style={{
                   fontSize: '15px',
                   fontWeight: 700,
-                  color: '#1b4d3e',
+                  color: '#172554',
                   margin: 0,
                   textTransform: 'uppercase',
                   letterSpacing: '1px',
@@ -659,13 +659,13 @@ export const ReportsAndExport = () => {
                 {/* Logo IG dan FB */}
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                   {/* IG Icon SVG */}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#205B43" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#172554" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                   </svg>
                   {/* FB Icon SVG */}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#205B43" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#172554" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                   </svg>
                   <span>ponpesbaronbogr</span>
@@ -675,7 +675,7 @@ export const ReportsAndExport = () => {
 
                 {/* Telepon / Kontak WA */}
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <Phone size={12} color="#205B43" />
+                  <Phone size={12} color="#172554" />
                   <span>0812-1898-7172</span>
                 </span>
 
@@ -683,7 +683,7 @@ export const ReportsAndExport = () => {
 
                 {/* Website Resmi */}
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <Globe size={12} color="#205B43" />
+                  <Globe size={12} color="#172554" />
                   <span>alihsanbaronbogor.ponpes.id</span>
                 </span>
               </div>

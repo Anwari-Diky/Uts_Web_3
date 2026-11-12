@@ -450,12 +450,9 @@ export const RecommendationsAndFollowUp = ({ defaultTab = 'recommendations' }) =
             <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
               Rekomendasi Keputusan &amp; Tindak Lanjut
             </h2>
-            <span className="badge badge-success" style={{ fontSize: '12px' }}>
-              Fase 6 Aktif
-            </span>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '4px' }}>
-            Peninjauan dan penetapan keputusan akhir oleh Pimpinan Lab (Setujui, Tolak, Tunda) serta pelacakan riwayat tindak lanjut teknisi.
+            Persetujuan rekomendasi oleh Pimpinan dan pelacakan tindak lanjut perbaikan.
           </p>
         </div>
 
@@ -497,9 +494,9 @@ export const RecommendationsAndFollowUp = ({ defaultTab = 'recommendations' }) =
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'recommendations' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'recommendations' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'recommendations' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'recommendations' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
@@ -532,9 +529,9 @@ export const RecommendationsAndFollowUp = ({ defaultTab = 'recommendations' }) =
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'follow-up' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'follow-up' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'follow-up' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'follow-up' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}
@@ -546,8 +543,8 @@ export const RecommendationsAndFollowUp = ({ defaultTab = 'recommendations' }) =
               fontSize: '11px',
               padding: '2px 7px',
               borderRadius: '10px',
-              backgroundColor: 'var(--surface-sage)',
-              color: 'var(--brand-forest)',
+              backgroundColor: 'var(--electric-blue-light)',
+              color: 'var(--electric-blue)',
             }}
           >
             {repairHistory.length} Tugas
@@ -564,9 +561,9 @@ export const RecommendationsAndFollowUp = ({ defaultTab = 'recommendations' }) =
             fontSize: '14px',
             fontWeight: 600,
             border: 'none',
-            borderBottom: activeTab === 'notifications' ? '3px solid var(--brand-forest)' : '3px solid transparent',
+            borderBottom: activeTab === 'notifications' ? '3px solid var(--electric-blue)' : '3px solid transparent',
             backgroundColor: 'transparent',
-            color: activeTab === 'notifications' ? 'var(--brand-forest)' : 'var(--text-gray-green)',
+            color: activeTab === 'notifications' ? 'var(--electric-blue)' : 'var(--text-gray-green)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
           }}

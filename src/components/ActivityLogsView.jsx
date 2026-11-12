@@ -81,7 +81,7 @@ export const ActivityLogsView = () => {
             </span>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--text-gray-green)', marginTop: '4px' }}>
-            Seluruh perubahan kritis (kalkulasi SAW, keputusan Pimpinan, perubahan kriteria, mutasi perangkat) tersimpan permanen untuk transparansi dan audit laboratorium.
+            Rekam jejak aktivitas sistem, kalkulasi SAW, dan keputusan pimpinan.
           </p>
         </div>
 
@@ -183,8 +183,8 @@ export const ActivityLogsView = () => {
                           style={{
                             display: 'inline-block',
                             padding: '2px 6px',
-                            backgroundColor: 'var(--surface-sage)',
-                            color: 'var(--brand-forest)',
+                            backgroundColor: 'var(--electric-blue-light)',
+                            color: 'var(--electric-blue)',
                             borderRadius: '4px',
                             fontWeight: 700,
                             fontSize: '11px',
@@ -291,7 +291,7 @@ export const ActivityLogsView = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ScrollText size={18} color="var(--brand-forest)" />
+                <ScrollText size={18} color="var(--electric-blue)" />
                 <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                   Rincian Log Audit #{modalLog.id}
                 </h3>
