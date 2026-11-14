@@ -266,6 +266,32 @@ button:focus-visible {
   }
 }
 
+@keyframes bouncePill {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.chart-column-item {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chart-column-item:hover {
+  transform: translateY(-4px);
+}
+
+.chart-column-item:hover .chart-bar-fill {
+  filter: brightness(1.15);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.45) !important;
+}
+
+.chart-bar-fill {
+  transition: height 0.85s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease, box-shadow 0.2s ease;
+}
+
 .anim-fade-in {
   animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
