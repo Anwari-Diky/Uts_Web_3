@@ -184,20 +184,20 @@ export const DashboardView = ({ onNavigate }) => {
               Inventaris Perangkat
             </button>
             <button
-              onClick={() => onNavigate('damage-docs')}
+              onClick={() => onNavigate('recommendations')}
               className="btn-primary"
               style={{
                 fontSize: '13px',
                 padding: '8px 18px',
                 borderRadius: '9px',
                 fontWeight: 600,
-                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
-                backgroundColor: 'var(--brand-forest)',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.25)',
+                backgroundColor: 'var(--electric-blue)',
               }}
-              title="Buka menu Dokumentasi Kerusakan"
+              title="Buka menu Rekomendasi Keputusan"
             >
-              <Camera size={15} />
-              Dokumentasi Kerusakan
+              <Lightbulb size={15} />
+              Rekomendasi Keputusan
             </button>
           </div>
         </div>
@@ -291,9 +291,9 @@ export const DashboardView = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Dokumentasi Kerusakan Periferal */}
+        {/* Prioritas Penanganan SAW */}
         <div
-          onClick={() => onNavigate('damage-docs')}
+          onClick={() => onNavigate('saw-results')}
           className="dashboard-card-interactive"
           style={{
             backgroundColor: '#ffffff',
@@ -304,31 +304,30 @@ export const DashboardView = ({ onNavigate }) => {
             position: 'relative',
             overflow: 'hidden',
           }}
-          title="Klik untuk membuka menu Dokumentasi Kerusakan"
+          title="Klik untuk membuka menu Hasil & Peringkat SAW"
         >
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', backgroundColor: 'var(--brand-forest)' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', backgroundColor: 'var(--status-danger)' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#64748b' }}>Dokumentasi Kerusakan</span>
+            <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#64748b' }}>Prioritas Penanganan</span>
             <div
               style={{
                 width: '36px',
                 height: '36px',
                 borderRadius: '10px',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Camera size={18} color="var(--brand-forest)" />
+              <TrendingUp size={18} color="var(--status-danger)" />
             </div>
           </div>
-          <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--brand-forest)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-            {stats?.damage_docs?.total ?? (conditions.rusak_ringan + conditions.rusak_berat) ?? 2}{' '}
-            <span style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>Berkas Foto</span>
+          <div style={{ fontSize: '26px', fontWeight: 800, color: 'var(--status-danger)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            {prioritasTinggi} <span style={{ fontSize: '13px', fontWeight: 500, color: '#64748b' }}>Perangkat</span>
           </div>
           <div style={{ fontSize: '12px', color: '#64748b', marginTop: '8px', fontWeight: 500 }}>
-            Bukti fisik kerusakan periferal
+            Tingkat urgensi tinggi (SAW)
           </div>
         </div>
 
@@ -581,7 +580,163 @@ export const DashboardView = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Chart C: Kategori Inventaris Perangkat (Mendampingi Komposisi Fisik pada Baris 1) */}
+        {/* Chart B: Prioritas & Evaluasi SAW */}
+        <div
+          className="anim-fade-in"
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px 22px',
+            borderRadius: '14px',
+            border: '1px solid var(--border-color)',
+            boxShadow: 'var(--shadow-sm)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <BarChart2 size={18} color="var(--electric-blue)" />
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                  Distribusi Prioritas Evaluasi SAW
+                </h3>
+              </div>
+              <button
+                onClick={() => onNavigate('saw-results')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--electric-blue)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                Lihat Detail <ChevronRight size={13} />
+              </button>
+            </div>
+
+            {/* Minimalist Progress Channels */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
+              {/* Prioritas Tinggi */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--status-danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-danger)' }} />
+                    Prioritas Tinggi
+                  </span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {prioritasTinggi} Perangkat{' '}
+                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
+                      ({Math.round((prioritasTinggi / totalEvaluatedSaw) * 100)}%)
+                    </span>
+                  </span>
+                </div>
+                <div style={{ height: '7px', backgroundColor: 'var(--status-danger-bg)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: chartLoaded ? `${(prioritasTinggi / totalEvaluatedSaw) * 100}%` : '0%',
+                      backgroundColor: 'var(--status-danger)',
+                      borderRadius: '4px',
+                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Prioritas Sedang */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--status-warning)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-warning)' }} />
+                    Prioritas Sedang
+                  </span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {prioritasSedang} Perangkat{' '}
+                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
+                      ({Math.round((prioritasSedang / totalEvaluatedSaw) * 100)}%)
+                    </span>
+                  </span>
+                </div>
+                <div style={{ height: '7px', backgroundColor: 'var(--status-warning-bg)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: chartLoaded ? `${(prioritasSedang / totalEvaluatedSaw) * 100}%` : '0%',
+                      backgroundColor: 'var(--status-warning)',
+                      borderRadius: '4px',
+                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Prioritas Rendah */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--electric-blue)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--electric-blue)' }} />
+                    Prioritas Rendah
+                  </span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                    {prioritasRendah} Perangkat{' '}
+                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
+                      ({Math.round((prioritasRendah / totalEvaluatedSaw) * 100)}%)
+                    </span>
+                  </span>
+                </div>
+                <div style={{ height: '7px', backgroundColor: 'var(--electric-blue-light)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: chartLoaded ? `${(prioritasRendah / totalEvaluatedSaw) * 100}%` : '0%',
+                      backgroundColor: 'var(--electric-blue)',
+                      borderRadius: '4px',
+                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Workflow Status Badges */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+              paddingTop: '14px',
+              borderTop: '1px solid var(--border-color)',
+            }}
+          >
+            <div style={{ backgroundColor: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Persetujuan Pimpinan</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
+                {recommendations.approved}{' '}
+                <span style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--status-success)' }}>Disetujui</span>
+              </div>
+            </div>
+
+            <div style={{ backgroundColor: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Rekomendasi Pembaruan</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
+                {latestSaw?.upgrade_candidates || 0}{' '}
+                <span style={{ fontSize: '11.5px', fontWeight: 600, color: '#64748b' }}>Unit Upgrade</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. ROW 2: Kategori Inventaris & Ringkasan Anggaran */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
+        {/* Chart C: Kategori Inventaris Perangkat */}
         <div
           className="anim-fade-in"
           style={{
@@ -696,10 +851,7 @@ export const DashboardView = ({ onNavigate }) => {
             </button>
           </div>
         </div>
-      </div>
 
-      {/* 4. ROW 2: Ringkasan Pemeliharaan & Riwayat Aktivitas Terkini (Tombol Laporan & Log Lengkap Disembunyikan Sesuai Milestone 50%) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
         {/* Chart D: Analisis Finansial Pemeliharaan */}
         <div
           className="anim-fade-in"
@@ -722,9 +874,22 @@ export const DashboardView = ({ onNavigate }) => {
                   Realisasi Anggaran Pemeliharaan
                 </h3>
               </div>
-              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
-                Status Pemeliharaan Lab
-              </span>
+              <button
+                onClick={() => onNavigate('reports')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--electric-blue)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
+                Ekspor Laporan <ChevronRight size={13} />
+              </button>
             </div>
 
             {/* Minimalist Financial Numbers */}
@@ -773,43 +938,59 @@ export const DashboardView = ({ onNavigate }) => {
               borderTop: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              fontSize: '12.5px',
-              color: 'var(--status-success)',
-              fontWeight: 500,
+              justifyContent: 'space-between',
             }}
           >
-            <CheckCircle2 size={15} color="var(--status-success)" />
-            <span>Pengeluaran anggaran pemeliharaan terkendali</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--status-success)', fontWeight: 500 }}>
+              <CheckCircle2 size={15} color="var(--status-success)" />
+              <span>Pengeluaran terkendali</span>
+            </div>
+            <button
+              onClick={() => onNavigate('reports')}
+              className="btn-primary"
+              style={{ fontSize: '11.5px', padding: '6px 12px', borderRadius: '8px', backgroundColor: 'var(--electric-blue)' }}
+            >
+              Unduh Rekap Laporan
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* 5. Riwayat Aktivitas & Log Sistem Terbaru (Tombol Log Lengkap Disembunyikan) */}
-        <div
-          className="anim-fade-in"
-          style={{
-            backgroundColor: '#ffffff',
-            padding: '20px 22px',
-            borderRadius: '14px',
-            border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-sm)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Activity size={18} color="var(--electric-blue)" />
-                <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-                  Riwayat Aktivitas Sistem Terkini
-                </h3>
-              </div>
-              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
-                Aktivitas Terakhir
-              </span>
-            </div>
+      {/* 5. Riwayat Aktivitas & Log Sistem Terbaru */}
+      <div
+        className="anim-fade-in"
+        style={{
+          backgroundColor: '#ffffff',
+          padding: '20px 22px',
+          borderRadius: '14px',
+          border: '1px solid var(--border-color)',
+          boxShadow: 'var(--shadow-sm)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Activity size={18} color="var(--electric-blue)" />
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+              Riwayat Aktivitas Sistem Terkini
+            </h3>
+          </div>
+          <button
+            onClick={() => onNavigate('activity-logs')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--electric-blue)',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+            }}
+          >
+            Lihat Seluruh Log <ChevronRight size={13} />
+          </button>
+        </div>
 
         {recentLogs.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '20px', color: '#64748b', fontSize: '13px' }}>
@@ -866,8 +1047,6 @@ export const DashboardView = ({ onNavigate }) => {
             ))}
           </div>
         )}
-          </div>
-        </div>
       </div>
     </div>
   );

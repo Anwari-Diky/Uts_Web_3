@@ -45,10 +45,9 @@ export const AppShell = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Safety guard: only allow navigation to active 50% milestone modules
+  // Direct navigation handler for all completed modules
   const handleDashboardNavigate = (menu) => {
-    const allowed = ['dashboard', 'devices', 'damage-docs', 'repair-history', 'criteria', 'scale-guides', 'users', 'profile'];
-    if (allowed.includes(menu)) {
+    if (menu) {
       setActiveMenu(menu);
     }
   };
@@ -96,7 +95,6 @@ export const AppShell = () => {
   }, [token]);
 
   // RBAC Navigation Configuration conforming to SOT/PRD.md Section 4 & SOT/UI-GUIDELINE.md Section 4
-  // Only modules completed for the 50% milestone demo are shown
   const navigationGroups = [
     {
       group: 'Ringkasan',
@@ -117,6 +115,15 @@ export const AppShell = () => {
       items: [
         { id: 'criteria', label: 'Kriteria & Bobot', icon: Sliders, roles: ['admin', 'pimpinan'] },
         { id: 'scale-guides', label: 'Skala Penilaian', icon: Award, roles: ['admin', 'pimpinan', 'teknisi'] },
+        { id: 'assessments', label: 'Penilaian Perangkat', icon: ClipboardList, roles: ['admin', 'pimpinan', 'teknisi'] },
+        { id: 'saw-results', label: 'Hasil & Peringkat', icon: BarChart3, roles: ['admin', 'pimpinan', 'teknisi'] },
+        { id: 'recommendations', label: 'Rekomendasi Keputusan', icon: Lightbulb, roles: ['admin', 'pimpinan', 'teknisi'] },
+      ],
+    },
+    {
+      group: 'Pelaporan',
+      items: [
+        { id: 'reports', label: 'Laporan', icon: FileText, roles: ['admin', 'pimpinan'] },
       ],
     },
     {
@@ -124,6 +131,8 @@ export const AppShell = () => {
       items: [
         { id: 'users', label: 'Manajemen Pengguna', icon: Users, roles: ['admin'] },
         { id: 'profile', label: 'Profil Saya', icon: UserCheck, roles: ['teknisi', 'pimpinan'] },
+        { id: 'activity-logs', label: 'Log Aktivitas', icon: ScrollText, roles: ['admin', 'pimpinan'] },
+        { id: 'settings', label: 'Pengaturan Sistem', icon: Settings, roles: ['admin'] },
       ],
     },
   ];
