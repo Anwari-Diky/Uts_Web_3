@@ -145,6 +145,11 @@ export const AppShell = () => {
     }))
     .filter((grp) => grp.items.length > 0);
 
+  const isMenuAllowed = (menuId) => {
+    if (menuId === 'dashboard' || menuId === 'notifications') return true;
+    return allowedGroups.some((grp) => grp.items.some((item) => item.id === menuId));
+  };
+
   const getRoleBadge = (role) => {
     switch (role) {
       case 'admin':
@@ -561,7 +566,23 @@ export const AppShell = () => {
 
         {/* Main Body */}
         <main className="container" style={{ flex: 1, width: '100%' }}>
-          {activeMenu === 'devices' ? (
+          {!isMenuAllowed(activeMenu) ? (
+            <div className="card anim-fade-in" style={{ padding: '48px 24px', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: 'var(--status-danger-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: 'var(--status-danger)' }}>
+                <ShieldAlert size={28} />
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Akses Halaman Dibatasi
+              </h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-gray-green)', maxWidth: '480px', margin: '8px auto 20px auto', lineHeight: '1.6' }}>
+                Peran Anda ({user?.role}) tidak memiliki wewenang untuk membuka modul <code>{activeMenu}</code> sesuai matriks hak akses sistem.
+              </p>
+              <button onClick={() => setActiveMenu('dashboard')} className="btn-primary" style={{ padding: '9px 20px' }}>
+                <LayoutDashboard size={15} />
+                <span>Kembali ke Dashboard</span>
+              </button>
+            </div>
+          ) : activeMenu === 'devices' ? (
             <DeviceManagement />
           ) : activeMenu === 'damage-docs' ? (
             <DamageDocumentationView />
