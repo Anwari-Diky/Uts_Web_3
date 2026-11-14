@@ -159,10 +159,10 @@ export const AppShell = () => {
   };
 
   return (
-    <div className="app-shell-root" style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
+    <div className="app-shell-root">
       {/* Sidebar Navigation (248px desktop conforming to SOT/UI-GUIDELINE.md) */}
       <aside
-        className="no-print"
+        className={`no-print app-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}
         style={{
           width: '248px',
           backgroundColor: 'var(--primary-navy)',
@@ -174,7 +174,6 @@ export const AppShell = () => {
           bottom: 0,
           left: 0,
           zIndex: 40,
-          transform: mobileMenuOpen ? 'translateX(0)' : undefined,
           transition: 'transform 200ms ease',
         }}
       >
@@ -395,8 +394,23 @@ export const AppShell = () => {
         </div>
       </aside>
 
+      {/* Mobile Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="no-print"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.55)',
+            zIndex: 35,
+            backdropFilter: 'blur(2px)',
+          }}
+        />
+      )}
+
       {/* Main Container Layout */}
-      <div className="app-main-layout" style={{ flex: 1, marginLeft: '248px', display: 'flex', flexDirection: 'column' }}>
+      <div className="app-main-layout">
         {/* Topbar */}
         <header
           className="no-print"
@@ -414,6 +428,25 @@ export const AppShell = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Mobile Hamburger Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="mobile-menu-toggle"
+              aria-label="Toggle navigation menu"
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '34px',
+                height: '34px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'var(--surface-white)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+              }}
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
             <span style={{ fontSize: '13px', color: '#94A3B8' }}>Navigasi</span>
             <span style={{ fontSize: '13px', color: '#64748B' }}>/</span>
             <strong style={{ fontSize: '14px', color: 'var(--surface-white)', fontWeight: 600 }}>

@@ -89,12 +89,60 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Base Utility Classes */
+/* Base Utility Classes & Full-Width Adaptive Scaling */
 .container {
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
   padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1600px) {
+  .container {
+    padding: 24px 32px;
+  }
+}
+
+/* Layout & Zoom/Resolution Adaptive Architecture */
+.app-shell-root {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-main);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.app-main-layout {
+  flex: 1;
+  min-width: 0;
+  width: calc(100% - 248px);
+  margin-left: 248px;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.2s ease, width 0.2s ease;
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-menu-toggle {
+    display: inline-flex !important;
+  }
+  .app-sidebar {
+    transform: translateX(-100%) !important;
+  }
+  .app-sidebar.mobile-open {
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+  .app-main-layout {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
 }
 
 .card {
