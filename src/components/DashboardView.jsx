@@ -25,7 +25,10 @@ import {
   Keyboard,
   Mouse,
   Printer,
-  Cpu
+  Cpu,
+  Flame,
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 
 const formatRupiah = (val) => {
@@ -65,6 +68,8 @@ export const DashboardView = ({ onNavigate }) => {
   const [chartLoaded, setChartLoaded] = useState(false);
   const [categoryChartType, setCategoryChartType] = useState('bar');
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [sawChartType, setSawChartType] = useState('bars');
+  const [hoveredSawTier, setHoveredSawTier] = useState(null);
 
   const fetchDashboardStats = useCallback(async () => {
     setLoading(true);
@@ -113,11 +118,27 @@ export const DashboardView = ({ onNavigate }) => {
   const offsetRingan = -strokeBaik;
   const offsetBerat = -(strokeBaik + strokeRingan);
 
-  // SAW Priority numbers
+  // SAW Priority numbers & metrics
   const prioritasTinggi = latestSaw?.priority_bands?.Tinggi || 0;
   const prioritasSedang = latestSaw?.priority_bands?.Sedang || 0;
   const prioritasRendah = latestSaw?.priority_bands?.Rendah || 0;
-  const totalEvaluatedSaw = prioritasTinggi + prioritasSedang + prioritasRendah || 1;
+  const totalEvaluatedSaw = prioritasTinggi + prioritasSedang + prioritasRendah;
+  const safeTotalSaw = totalEvaluatedSaw > 0 ? totalEvaluatedSaw : 1;
+
+  const pctTinggi = totalEvaluatedSaw > 0 ? Math.round((prioritasTinggi / safeTotalSaw) * 100) : 0;
+  const pctSedang = totalEvaluatedSaw > 0 ? Math.round((prioritasSedang / safeTotalSaw) * 100) : 0;
+  const pctRendah = totalEvaluatedSaw > 0 ? Math.max(0, 100 - pctTinggi - pctSedang) : 0;
+
+  // Donut SVG Parameters for SAW (Radius 50, Circumference ~ 314.159)
+  const sawRadius = 50;
+  const sawCircumference = 2 * Math.PI * sawRadius;
+  const sawStrokeTinggi = (pctTinggi / 100) * sawCircumference;
+  const sawStrokeSedang = (pctSedang / 100) * sawCircumference;
+  const sawStrokeRendah = (pctRendah / 100) * sawCircumference;
+
+  const sawOffsetTinggi = 0;
+  const sawOffsetSedang = -sawStrokeTinggi;
+  const sawOffsetRendah = -(sawStrokeTinggi + sawStrokeSedang);
 
   // Financial calculations
   const totalEstCost = repairs.total_estimated_cost || 0;
@@ -616,7 +637,7 @@ export const DashboardView = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Chart B: Prioritas & Evaluasi SAW */}
+        {/* Chart B: Prioritas & Evaluasi SAW (Modern Animated Priority Channels & Donut Chart) */}
         <div
           className="anim-fade-in"
           style={{
@@ -628,143 +649,639 @@ export const DashboardView = ({ onNavigate }) => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
+            position: 'relative',
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            {/* Header with View Switcher (Urgensi vs Donut) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <BarChart2 size={18} color="var(--electric-blue)" />
-                <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-                  Distribusi Prioritas Evaluasi SAW
-                </h3>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--status-danger)',
+                  }}
+                >
+                  <Activity size={17} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                    Distribusi Prioritas Evaluasi SAW
+                  </h3>
+                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                    Tingkat urgensi penanganan dari kalkulasi preferensi Simple Additive Weighting
+                  </p>
+                </div>
               </div>
+
+              {/* View Switcher & Detail Link */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    backgroundColor: '#F1F5F9',
+                    borderRadius: '8px',
+                    padding: '2.5px',
+                    border: '1px solid var(--border-color)',
+                  }}
+                >
+                  <button
+                    onClick={() => setSawChartType('bars')}
+                    title="Tingkat Urgensi SAW"
+                    style={{
+                      padding: '3px 9px',
+                      borderRadius: '6px',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: sawChartType === 'bars' ? 'var(--surface-white)' : 'transparent',
+                      color: sawChartType === 'bars' ? 'var(--electric-blue)' : '#64748B',
+                      boxShadow: sawChartType === 'bars' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      cursor: 'pointer',
+                      border: 'none',
+                    }}
+                  >
+                    <BarChart2 size={12} />
+                    <span>Urgensi</span>
+                  </button>
+                  <button
+                    onClick={() => setSawChartType('donut')}
+                    title="Grafik Donut Komposisi SAW"
+                    style={{
+                      padding: '3px 9px',
+                      borderRadius: '6px',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: sawChartType === 'donut' ? 'var(--surface-white)' : 'transparent',
+                      color: sawChartType === 'donut' ? 'var(--electric-blue)' : '#64748B',
+                      boxShadow: sawChartType === 'donut' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      cursor: 'pointer',
+                      border: 'none',
+                    }}
+                  >
+                    <PieChart size={12} />
+                    <span>Donut</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => onNavigate('saw-results')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--electric-blue)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '2px',
+                  }}
+                >
+                  Detail <ChevronRight size={13} />
+                </button>
+              </div>
+            </div>
+
+            {/* CHART DISPLAY: Mode Urgensi (Animated Channels) OR Mode Donut */}
+            {sawChartType === 'bars' ? (
+              /* 1. Mode Animated Urgency Channels with Custom Gradients & Badges */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+                {/* Prioritas Tinggi */}
+                <div
+                  className="saw-tier-card"
+                  onMouseEnter={() => setHoveredSawTier('Tinggi')}
+                  onMouseLeave={() => setHoveredSawTier(null)}
+                  style={{
+                    backgroundColor: hoveredSawTier === 'Tinggi' ? 'rgba(254, 242, 242, 0.7)' : '#FAFBFD',
+                    border: '1px solid',
+                    borderColor: hoveredSawTier === 'Tinggi' ? '#FCA5A5' : '#E2E8F0',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '6px',
+                          backgroundColor: '#FEE2E2',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#DC2626',
+                        }}
+                      >
+                        <Flame size={14} />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span className="anim-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#EF4444' }} />
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#B91C1C' }}>Prioritas Tinggi</span>
+                        <span style={{ fontSize: '10.5px', padding: '1px 6px', borderRadius: '4px', backgroundColor: '#FEE2E2', color: '#DC2626', fontWeight: 600 }}>
+                          V<sub>i</sub> ≥ 0.70
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        {prioritasTinggi} Perangkat
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          color: '#DC2626',
+                          backgroundColor: '#FEE2E2',
+                          padding: '1px 6px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        {pctTinggi}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar Track with Glow & Custom Cubic Bezier */}
+                  <div style={{ height: '8px', backgroundColor: '#FEE2E2', borderRadius: '5px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: chartLoaded ? `${pctTinggi}%` : '0%',
+                        background: 'linear-gradient(90deg, #F87171 0%, #EF4444 60%, #DC2626 100%)',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 6px rgba(239, 68, 68, 0.35)',
+                        transition: 'width 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '4px' }}>
+                    Tindakan segera: Butuh perbaikan intensif atau pertimbangan peremajaan komponen
+                  </div>
+                </div>
+
+                {/* Prioritas Sedang */}
+                <div
+                  className="saw-tier-card"
+                  onMouseEnter={() => setHoveredSawTier('Sedang')}
+                  onMouseLeave={() => setHoveredSawTier(null)}
+                  style={{
+                    backgroundColor: hoveredSawTier === 'Sedang' ? 'rgba(254, 243, 199, 0.7)' : '#FAFBFD',
+                    border: '1px solid',
+                    borderColor: hoveredSawTier === 'Sedang' ? '#FCD34D' : '#E2E8F0',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '6px',
+                          backgroundColor: '#FEF3C7',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#D97706',
+                        }}
+                      >
+                        <Clock size={14} />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#F59E0B' }} />
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#B45309' }}>Prioritas Sedang</span>
+                        <span style={{ fontSize: '10.5px', padding: '1px 6px', borderRadius: '4px', backgroundColor: '#FEF3C7', color: '#D97706', fontWeight: 600 }}>
+                          0.50 ≤ V<sub>i</sub> &lt; 0.70
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        {prioritasSedang} Perangkat
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          color: '#D97706',
+                          backgroundColor: '#FEF3C7',
+                          padding: '1px 6px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        {pctSedang}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ height: '8px', backgroundColor: '#FEF3C7', borderRadius: '5px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: chartLoaded ? `${pctSedang}%` : '0%',
+                        background: 'linear-gradient(90deg, #FBBF24 0%, #F59E0B 60%, #D97706 100%)',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 6px rgba(245, 158, 11, 0.35)',
+                        transition: 'width 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '4px' }}>
+                    Tindakan terjadwal: Pemeliharaan berkala, servis minor, dan kalibrasi periferal
+                  </div>
+                </div>
+
+                {/* Prioritas Rendah */}
+                <div
+                  className="saw-tier-card"
+                  onMouseEnter={() => setHoveredSawTier('Rendah')}
+                  onMouseLeave={() => setHoveredSawTier(null)}
+                  style={{
+                    backgroundColor: hoveredSawTier === 'Rendah' ? 'rgba(238, 242, 255, 0.7)' : '#FAFBFD',
+                    border: '1px solid',
+                    borderColor: hoveredSawTier === 'Rendah' ? '#A5B4FC' : '#E2E8F0',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '6px',
+                          backgroundColor: '#DBEAFE',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#2563EB',
+                        }}
+                      >
+                        <ShieldCheck size={14} />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#3B82F6' }} />
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#1D4ED8' }}>Prioritas Rendah</span>
+                        <span style={{ fontSize: '10.5px', padding: '1px 6px', borderRadius: '4px', backgroundColor: '#DBEAFE', color: '#2563EB', fontWeight: 600 }}>
+                          V<sub>i</sub> &lt; 0.50
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        {prioritasRendah} Perangkat
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          color: '#2563EB',
+                          backgroundColor: '#DBEAFE',
+                          padding: '1px 6px',
+                          borderRadius: '10px',
+                        }}
+                      >
+                        {pctRendah}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ height: '8px', backgroundColor: '#DBEAFE', borderRadius: '5px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: chartLoaded ? `${pctRendah}%` : '0%',
+                        background: 'linear-gradient(90deg, #60A5FA 0%, #3B82F6 60%, #1D4ED8 100%)',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 6px rgba(59, 130, 246, 0.35)',
+                        transition: 'width 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '4px' }}>
+                    Kondisi terkendali: Cukup pembersihan rutin dan siap digunakan praktikum
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* 2. Mode Grafik Donut SAW dengan Detail Interaktif */
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  padding: '14px 16px',
+                  backgroundColor: '#FAFBFD',
+                  borderRadius: '12px',
+                  border: '1px solid #E2E8F0',
+                  marginBottom: '16px',
+                }}
+              >
+                {/* SVG Donut */}
+                <div style={{ position: 'relative', width: '130px', height: '130px', flexShrink: 0 }}>
+                  <svg width="130" height="130" viewBox="0 0 140 140" style={{ transform: 'rotate(-90deg)' }}>
+                    {/* Background Track */}
+                    <circle
+                      cx="70"
+                      cy="70"
+                      r={sawRadius}
+                      fill="none"
+                      stroke="#F1F5F9"
+                      strokeWidth="14"
+                    />
+                    {/* Segment 1: Tinggi (Red) */}
+                    {pctTinggi > 0 && (
+                      <circle
+                        className="saw-donut-slice"
+                        cx="70"
+                        cy="70"
+                        r={sawRadius}
+                        fill="none"
+                        stroke="#EF4444"
+                        strokeWidth={hoveredSawTier === 'Tinggi' ? 16 : 14}
+                        strokeDasharray={`${chartLoaded ? sawStrokeTinggi : 0} ${sawCircumference}`}
+                        strokeDashoffset={sawOffsetTinggi}
+                        strokeLinecap="round"
+                        onMouseEnter={() => setHoveredSawTier('Tinggi')}
+                        onMouseLeave={() => setHoveredSawTier(null)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    {/* Segment 2: Sedang (Amber) */}
+                    {pctSedang > 0 && (
+                      <circle
+                        className="saw-donut-slice"
+                        cx="70"
+                        cy="70"
+                        r={sawRadius}
+                        fill="none"
+                        stroke="#F59E0B"
+                        strokeWidth={hoveredSawTier === 'Sedang' ? 16 : 14}
+                        strokeDasharray={`${chartLoaded ? sawStrokeSedang : 0} ${sawCircumference}`}
+                        strokeDashoffset={sawOffsetSedang}
+                        strokeLinecap="round"
+                        onMouseEnter={() => setHoveredSawTier('Sedang')}
+                        onMouseLeave={() => setHoveredSawTier(null)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    {/* Segment 3: Rendah (Blue) */}
+                    {pctRendah > 0 && (
+                      <circle
+                        className="saw-donut-slice"
+                        cx="70"
+                        cy="70"
+                        r={sawRadius}
+                        fill="none"
+                        stroke="#3B82F6"
+                        strokeWidth={hoveredSawTier === 'Rendah' ? 16 : 14}
+                        strokeDasharray={`${chartLoaded ? sawStrokeRendah : 0} ${sawCircumference}`}
+                        strokeDashoffset={sawOffsetRendah}
+                        strokeLinecap="round"
+                        onMouseEnter={() => setHoveredSawTier('Rendah')}
+                        onMouseLeave={() => setHoveredSawTier(null)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                  </svg>
+                  {/* Center Text Info */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {hoveredSawTier === 'Tinggi' ? (
+                      <>
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: '#DC2626' }}>{prioritasTinggi}</span>
+                        <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Tinggi</span>
+                      </>
+                    ) : hoveredSawTier === 'Sedang' ? (
+                      <>
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: '#D97706' }}>{prioritasSedang}</span>
+                        <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Sedang</span>
+                      </>
+                    ) : hoveredSawTier === 'Rendah' ? (
+                      <>
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: '#2563EB' }}>{prioritasRendah}</span>
+                        <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Rendah</span>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: '20px', fontWeight: 800, color: '#DC2626' }}>{prioritasTinggi}</span>
+                        <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Urgensi Tinggi</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Donut Legend Cards */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div
+                    onMouseEnter={() => setHoveredSawTier('Tinggi')}
+                    onMouseLeave={() => setHoveredSawTier(null)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '7px 10px',
+                      borderRadius: '8px',
+                      backgroundColor: hoveredSawTier === 'Tinggi' ? '#FEE2E2' : 'var(--status-danger-bg)',
+                      border: '1px solid var(--status-danger-border)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="anim-pulse-dot" style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#EF4444' }} />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#B91C1C' }}>Tinggi</span>
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#B91C1C' }}>
+                      {prioritasTinggi} <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748B' }}>({pctTinggi}%)</span>
+                    </span>
+                  </div>
+
+                  <div
+                    onMouseEnter={() => setHoveredSawTier('Sedang')}
+                    onMouseLeave={() => setHoveredSawTier(null)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '7px 10px',
+                      borderRadius: '8px',
+                      backgroundColor: hoveredSawTier === 'Sedang' ? '#FEF3C7' : 'var(--status-warning-bg)',
+                      border: '1px solid var(--status-warning-border)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#F59E0B' }} />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#B45309' }}>Sedang</span>
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#B45309' }}>
+                      {prioritasSedang} <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748B' }}>({pctSedang}%)</span>
+                    </span>
+                  </div>
+
+                  <div
+                    onMouseEnter={() => setHoveredSawTier('Rendah')}
+                    onMouseLeave={() => setHoveredSawTier(null)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '7px 10px',
+                      borderRadius: '8px',
+                      backgroundColor: hoveredSawTier === 'Rendah' ? '#DBEAFE' : 'var(--electric-blue-light)',
+                      border: '1px solid var(--border-color)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#3B82F6' }} />
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#1D4ED8' }}>Rendah</span>
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#1D4ED8' }}>
+                      {prioritasRendah} <span style={{ fontSize: '11px', fontWeight: 500, color: '#64748B' }}>({pctRendah}%)</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Workflow Status Badges & Quick Action Link */}
+          <div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
+                paddingTop: '14px',
+                borderTop: '1px solid var(--border-color)',
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: '#F8FAFC',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--status-success-bg)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--status-success)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <CheckCircle2 size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600 }}>Persetujuan Pimpinan</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '1px' }}>
+                    {recommendations.approved}{' '}
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--status-success)' }}>Disetujui</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  backgroundColor: '#F8FAFC',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: '#EEF2FF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#6366F1',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sparkles size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600 }}>Rekomendasi Pembaruan</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '1px' }}>
+                    {latestSaw?.upgrade_candidates || 0}{' '}
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: '#6366F1' }}>Unit Upgrade</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action to Full SAW Calculation */}
+            <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => onNavigate('saw-results')}
                 style={{
                   background: 'none',
                   border: 'none',
                   color: 'var(--electric-blue)',
-                  fontSize: '12px',
+                  fontSize: '11.5px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '3px',
+                  gap: '4px',
+                  padding: '4px 6px',
+                  borderRadius: '6px',
                 }}
               >
-                Lihat Detail <ChevronRight size={13} />
+                <span>Buka Matriks & Kalkulasi Lengkap SAW</span>
+                <ArrowRight size={12} />
               </button>
-            </div>
-
-            {/* Minimalist Progress Channels */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
-              {/* Prioritas Tinggi */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--status-danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-danger)' }} />
-                    Prioritas Tinggi
-                  </span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {prioritasTinggi} Perangkat{' '}
-                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
-                      ({Math.round((prioritasTinggi / totalEvaluatedSaw) * 100)}%)
-                    </span>
-                  </span>
-                </div>
-                <div style={{ height: '7px', backgroundColor: 'var(--status-danger-bg)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: chartLoaded ? `${(prioritasTinggi / totalEvaluatedSaw) * 100}%` : '0%',
-                      backgroundColor: 'var(--status-danger)',
-                      borderRadius: '4px',
-                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Prioritas Sedang */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--status-warning)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--status-warning)' }} />
-                    Prioritas Sedang
-                  </span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {prioritasSedang} Perangkat{' '}
-                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
-                      ({Math.round((prioritasSedang / totalEvaluatedSaw) * 100)}%)
-                    </span>
-                  </span>
-                </div>
-                <div style={{ height: '7px', backgroundColor: 'var(--status-warning-bg)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: chartLoaded ? `${(prioritasSedang / totalEvaluatedSaw) * 100}%` : '0%',
-                      backgroundColor: 'var(--status-warning)',
-                      borderRadius: '4px',
-                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Prioritas Rendah */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--electric-blue)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--electric-blue)' }} />
-                    Prioritas Rendah
-                  </span>
-                  <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                    {prioritasRendah} Perangkat{' '}
-                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
-                      ({Math.round((prioritasRendah / totalEvaluatedSaw) * 100)}%)
-                    </span>
-                  </span>
-                </div>
-                <div style={{ height: '7px', backgroundColor: 'var(--electric-blue-light)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: chartLoaded ? `${(prioritasRendah / totalEvaluatedSaw) * 100}%` : '0%',
-                      backgroundColor: 'var(--electric-blue)',
-                      borderRadius: '4px',
-                      transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Workflow Status Badges */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '10px',
-              paddingTop: '14px',
-              borderTop: '1px solid var(--border-color)',
-            }}
-          >
-            <div style={{ backgroundColor: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Persetujuan Pimpinan</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-                {recommendations.approved}{' '}
-                <span style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--status-success)' }}>Disetujui</span>
-              </div>
-            </div>
-
-            <div style={{ backgroundColor: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Rekomendasi Pembaruan</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-                {latestSaw?.upgrade_candidates || 0}{' '}
-                <span style={{ fontSize: '11.5px', fontWeight: 600, color: '#64748b' }}>Unit Upgrade</span>
-              </div>
             </div>
           </div>
         </div>
