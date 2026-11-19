@@ -420,19 +420,21 @@ export const AppShell = () => {
         <header
           className="no-print"
           style={{
-            height: '60px',
+            minHeight: '60px',
             backgroundColor: 'var(--primary-navy)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
-            padding: '0 24px',
+            padding: '10px 16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             position: 'sticky',
             top: 0,
             zIndex: 30,
+            flexWrap: 'wrap',
+            gap: '10px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flexShrink: 1 }}>
             {/* Mobile Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -448,13 +450,14 @@ export const AppShell = () => {
                 color: 'var(--surface-white)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 cursor: 'pointer',
+                flexShrink: 0,
               }}
             >
               {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
-            <span style={{ fontSize: '13px', color: '#94A3B8' }}>Navigasi</span>
-            <span style={{ fontSize: '13px', color: '#64748B' }}>/</span>
-            <strong style={{ fontSize: '14px', color: 'var(--surface-white)', fontWeight: 600 }}>
+            <span className="hide-on-mobile" style={{ fontSize: '13px', color: '#94A3B8' }}>Navigasi</span>
+            <span className="hide-on-mobile" style={{ fontSize: '13px', color: '#64748B' }}>/</span>
+            <strong style={{ fontSize: '14px', color: 'var(--surface-white)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {{
                 dashboard: 'Dashboard',
                 devices: 'Data Perangkat',
@@ -474,7 +477,7 @@ export const AppShell = () => {
             </strong>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             {/* Notifications Bell */}
             <button
               onClick={() => setActiveMenu('notifications')}
@@ -484,13 +487,14 @@ export const AppShell = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '36px',
-                height: '36px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '50%',
                 backgroundColor: activeMenu === 'notifications' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.16)',
                 cursor: 'pointer',
                 color: activeMenu === 'notifications' ? 'var(--accent-cyan)' : 'var(--surface-white)',
+                flexShrink: 0,
               }}
             >
               <Bell size={16} />
@@ -521,45 +525,49 @@ export const AppShell = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 color: '#F1F5F9',
-                padding: '5px 12px',
+                padding: '4px 10px',
                 borderRadius: 'var(--radius-badge)',
-                fontSize: '12px',
+                fontSize: '11.5px',
                 fontWeight: 600,
                 border: '1px solid rgba(255, 255, 255, 0.18)',
+                whiteSpace: 'nowrap',
               }}
             >
               <Calendar size={13} color="var(--accent-cyan)" />
-              <span>Periode 2026 / Ganjil</span>
+              <span className="header-badge-text-mobile">Periode </span>
+              <span>2026 / Ganjil</span>
             </div>
 
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 backgroundColor: 'rgba(34, 211, 238, 0.14)',
                 color: 'var(--accent-cyan)',
-                padding: '6px 14px',
+                padding: '4px 10px',
                 borderRadius: 'var(--radius-badge)',
-                fontSize: '12px',
+                fontSize: '11.5px',
                 fontWeight: 600,
                 border: '1px solid rgba(34, 211, 238, 0.32)',
+                whiteSpace: 'nowrap',
               }}
             >
               <span
                 style={{
-                  width: '8px',
-                  height: '8px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '50%',
                   backgroundColor: 'var(--accent-cyan)',
                   boxShadow: '0 0 0 2px rgba(34, 211, 238, 0.35)',
                   display: 'inline-block',
                 }}
               />
-              <span>Sistem Aktif</span>
+              <span className="header-badge-text-mobile">Sistem </span>
+              <span>Aktif</span>
             </div>
           </div>
         </header>

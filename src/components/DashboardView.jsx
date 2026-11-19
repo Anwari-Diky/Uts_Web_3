@@ -261,14 +261,7 @@ export const DashboardView = ({ onNavigate }) => {
       </div>
 
       {/* 2. Top Metric KPI Row: Clear Hierarchy & Comfortable Padding */}
-      <div
-        className="anim-fade-in"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-          gap: '14px',
-        }}
-      >
+      <div className="anim-fade-in dashboard-kpi-grid">
         {/* Total Perangkat */}
         <div
           onClick={() => onNavigate('devices')}
@@ -429,7 +422,7 @@ export const DashboardView = ({ onNavigate }) => {
       </div>
 
       {/* 3. ROW 1: Komposisi Kondisi & Distribusi Inventaris Perangkat */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
+      <div className="dashboard-charts-row">
         {/* Chart A: Donut Komposisi Kondisi Fisik */}
         <div
           className="anim-fade-in"
@@ -794,15 +787,9 @@ export const DashboardView = ({ onNavigate }) => {
 
                 {/* Animated Columns Grid */}
                 <div
+                  className="chart-columns-grid"
                   style={{
-                    display: 'grid',
                     gridTemplateColumns: `repeat(${displayCategories.length}, 1fr)`,
-                    gap: '12px',
-                    alignItems: 'flex-end',
-                    height: '180px',
-                    position: 'relative',
-                    zIndex: 2,
-                    padding: '0 8px',
                   }}
                 >
                   {displayCategories.map((cat, idx) => {
@@ -1082,7 +1069,7 @@ export const DashboardView = ({ onNavigate }) => {
       </div>
 
       {/* 4. ROW 2: Prioritas Evaluasi SAW & Realisasi Anggaran Pemeliharaan */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
+      <div className="dashboard-charts-row">
         {/* Chart B: Prioritas & Evaluasi SAW (Modern Animated Priority Channels & Donut Chart) */}
         <div
           className="anim-fade-in"
@@ -1630,7 +1617,7 @@ export const DashboardView = ({ onNavigate }) => {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
                 gap: '10px',
                 paddingTop: '14px',
                 borderTop: '1px solid var(--border-color)',
@@ -1773,7 +1760,7 @@ export const DashboardView = ({ onNavigate }) => {
             </div>
 
             {/* Minimalist Financial Numbers */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: '10px', marginBottom: '14px' }}>
               <div style={{ backgroundColor: '#F8FAFC', padding: '11px 14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Estimasi Anggaran</div>
                 <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', marginTop: '2px', letterSpacing: '-0.01em' }}>
@@ -1819,6 +1806,8 @@ export const DashboardView = ({ onNavigate }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '8px',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--status-success)', fontWeight: 500 }}>
@@ -1890,7 +1879,8 @@ export const DashboardView = ({ onNavigate }) => {
                   borderRadius: '9px',
                   border: '1px solid var(--border-color)',
                   fontSize: '12.5px',
-                  gap: '12px',
+                  gap: '10px',
+                  flexWrap: 'wrap',
                   transition: 'background-color 0.15s ease',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#F8FAFC')}

@@ -145,6 +145,79 @@ button:focus-visible {
   }
 }
 
+/* Mobile Drawer Overlay Backdrop */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 38;
+  animation: fadeInUp 0.2s ease both;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 12px 14px !important;
+  }
+  .card {
+    padding: 16px !important;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .header-badge-text-mobile {
+    display: none !important;
+  }
+}
+
+/* Dashboard Responsive Layout Grids */
+.dashboard-charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 860px) {
+  .dashboard-charts-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.dashboard-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 520px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.chart-columns-grid {
+  display: grid;
+  align-items: flex-end;
+  height: 180px;
+  position: relative;
+  z-index: 2;
+  padding: 0 4px;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .chart-columns-grid {
+    gap: 6px !important;
+  }
+}
+
 .card {
   background-color: var(--base-white);
   border: 1px solid var(--border-soft);
