@@ -428,7 +428,7 @@ export const DashboardView = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* 3. ROW 1: Donut Chart & SAW Priority Distribution */}
+      {/* 3. ROW 1: Komposisi Kondisi & Distribusi Inventaris Perangkat */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
         {/* Chart A: Donut Komposisi Kondisi Fisik */}
         <div
@@ -637,6 +637,452 @@ export const DashboardView = ({ onNavigate }) => {
           </div>
         </div>
 
+        {/* Chart C: Grafik Distribusi Inventaris Perangkat (Modern Animated Column & Donut Chart) */}
+        <div
+          className="anim-fade-in"
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px 22px',
+            borderRadius: '14px',
+            border: '1px solid var(--border-color)',
+            boxShadow: 'var(--shadow-sm)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            position: 'relative',
+          }}
+        >
+          <div>
+            {/* Card Header with View Mode Switcher */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--electric-blue-light)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--electric-blue)',
+                  }}
+                >
+                  <BarChart3 size={17} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                    Distribusi Inventaris Perangkat
+                  </h3>
+                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
+                    Visualisasi perbandingan unit per kategori periferal lab
+                  </p>
+                </div>
+              </div>
+
+              {/* View Switcher Pill (Kolom vs Donut) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    backgroundColor: '#F1F5F9',
+                    borderRadius: '8px',
+                    padding: '2.5px',
+                    border: '1px solid var(--border-color)',
+                  }}
+                >
+                  <button
+                    onClick={() => setCategoryChartType('bar')}
+                    title="Grafik Batang / Kolom"
+                    style={{
+                      padding: '3px 9px',
+                      borderRadius: '6px',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: categoryChartType === 'bar' ? 'var(--surface-white)' : 'transparent',
+                      color: categoryChartType === 'bar' ? 'var(--electric-blue)' : '#64748B',
+                      boxShadow: categoryChartType === 'bar' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <BarChart2 size={12} />
+                    <span>Kolom</span>
+                  </button>
+                  <button
+                    onClick={() => setCategoryChartType('donut')}
+                    title="Grafik Komposisi Donut"
+                    style={{
+                      padding: '3px 9px',
+                      borderRadius: '6px',
+                      fontSize: '11.5px',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: categoryChartType === 'donut' ? 'var(--surface-white)' : 'transparent',
+                      color: categoryChartType === 'donut' ? 'var(--electric-blue)' : '#64748B',
+                      boxShadow: categoryChartType === 'donut' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <PieChart size={12} />
+                    <span>Donut</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => onNavigate('devices')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--electric-blue)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '2px',
+                  }}
+                >
+                  Semua <ChevronRight size={13} />
+                </button>
+              </div>
+            </div>
+
+            {/* CHART DISPLAY AREA */}
+            {categoryChartType === 'bar' ? (
+              /* 1. Mode Grafik Kolom (Vertical Bar Chart) dengan Gridlines & Animasi Naik */
+              <div
+                style={{
+                  position: 'relative',
+                  padding: '16px 8px 6px 8px',
+                  backgroundColor: '#FAFBFD',
+                  borderRadius: '12px',
+                  border: '1px solid #E2E8F0',
+                  marginBottom: '14px',
+                }}
+              >
+                {/* Horizontal Guide Gridlines */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '28px',
+                    left: '12px',
+                    right: '12px',
+                    bottom: '56px',
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ borderTop: '1px dashed #E2E8F0', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '10px', color: '#94A3B8', marginTop: '-7px', backgroundColor: '#FAFBFD', paddingLeft: '4px' }}>
+                      {maxCategoryCount} Unit
+                    </span>
+                  </div>
+                  <div style={{ borderTop: '1px dashed #E2E8F0', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '10px', color: '#94A3B8', marginTop: '-7px', backgroundColor: '#FAFBFD', paddingLeft: '4px' }}>
+                      {Math.ceil(maxCategoryCount / 2)} Unit
+                    </span>
+                  </div>
+                  <div style={{ borderTop: '1px solid #CBD5E1', width: '100%' }} />
+                </div>
+
+                {/* Animated Columns Grid */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${displayCategories.length}, 1fr)`,
+                    gap: '12px',
+                    alignItems: 'flex-end',
+                    height: '180px',
+                    position: 'relative',
+                    zIndex: 2,
+                    padding: '0 8px',
+                  }}
+                >
+                  {displayCategories.map((cat, idx) => {
+                    const count = cat.device_count || 0;
+                    const pctOfMax = maxCategoryCount > 0 ? Math.round((count / maxCategoryCount) * 100) : 0;
+                    const pctOfTotal = devicesTotal > 0 ? Math.round((count / devicesTotal) * 100) : 0;
+                    const colorScheme = getCategoryColor(idx);
+                    const IconComp = getCategoryIcon(cat.name);
+                    const isHovered = hoveredCategory === cat.id;
+
+                    return (
+                      <div
+                        key={cat.id || idx}
+                        className="chart-column-item"
+                        onMouseEnter={() => setHoveredCategory(cat.id)}
+                        onMouseLeave={() => setHoveredCategory(null)}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          height: '100%',
+                          justifyContent: 'flex-end',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {/* Value Badge at top of column */}
+                        <div
+                          style={{
+                            marginBottom: '6px',
+                            padding: '2px 7px',
+                            borderRadius: '12px',
+                            backgroundColor: isHovered ? colorScheme.solid : colorScheme.light,
+                            color: isHovered ? '#FFFFFF' : colorScheme.solid,
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            border: `1px solid ${colorScheme.border}`,
+                            transition: 'all 0.2s ease',
+                            animation: isHovered ? 'bouncePill 0.6s infinite' : 'none',
+                          }}
+                        >
+                          {count}
+                        </div>
+
+                        {/* Column Track & Animated Fill Bar */}
+                        <div
+                          style={{
+                            width: '100%',
+                            maxWidth: '42px',
+                            height: '105px',
+                            backgroundColor: '#F1F5F9',
+                            borderRadius: '8px 8px 3px 3px',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            overflow: 'hidden',
+                            border: `1px solid ${isHovered ? colorScheme.solid : '#E2E8F0'}`,
+                            boxShadow: isHovered ? `0 0 0 2px ${colorScheme.light}` : 'none',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          <div
+                            className="chart-bar-fill"
+                            style={{
+                              width: '100%',
+                              height: chartLoaded ? `${Math.max(count > 0 ? 12 : 4, pctOfMax)}%` : '0%',
+                              background: count > 0 ? colorScheme.gradient : '#CBD5E1',
+                              borderRadius: '7px 7px 0 0',
+                              borderTop: count > 0 ? '2px solid rgba(255, 255, 255, 0.75)' : 'none',
+                              boxShadow: count > 0 ? `0 4px 12px rgba(59, 130, 246, 0.25)` : 'none',
+                            }}
+                          />
+                        </div>
+
+                        {/* Column X-Axis Footer Label */}
+                        <div
+                          style={{
+                            marginTop: '10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            gap: '3px',
+                            width: '100%',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '6px',
+                              backgroundColor: colorScheme.light,
+                              color: colorScheme.solid,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              border: `1px solid ${colorScheme.border}`,
+                            }}
+                          >
+                            <IconComp size={13} />
+                          </div>
+                          <span
+                            style={{
+                              fontSize: '11.5px',
+                              fontWeight: isHovered ? 700 : 600,
+                              color: isHovered ? 'var(--electric-blue)' : 'var(--text-primary)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '68px',
+                            }}
+                            title={cat.name}
+                          >
+                            {cat.name}
+                          </span>
+                          <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 500 }}>
+                            {pctOfTotal}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* 2. Mode Grafik Donut Komposisi Kategori */
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                  padding: '16px',
+                  backgroundColor: '#FAFBFD',
+                  borderRadius: '12px',
+                  border: '1px solid #E2E8F0',
+                  marginBottom: '14px',
+                  minHeight: '208px',
+                }}
+              >
+                {/* SVG Donut */}
+                <div style={{ position: 'relative', width: '136px', height: '136px', flexShrink: 0 }}>
+                  <svg width="136" height="136" viewBox="0 0 136 136" style={{ transform: 'rotate(-90deg)' }}>
+                    <circle cx="68" cy="68" r="52" fill="transparent" stroke="#E2E8F0" strokeWidth="14" />
+                    {(() => {
+                      const radius = 52;
+                      const circ = 2 * Math.PI * radius;
+                      let accOffset = 0;
+                      return displayCategories.map((cat, idx) => {
+                        const count = cat.device_count || 0;
+                        const sliceLen = devicesTotal > 0 ? (count / devicesTotal) * circ : 0;
+                        const offset = -accOffset;
+                        accOffset += sliceLen;
+                        const col = getCategoryColor(idx);
+                        if (sliceLen <= 0) return null;
+                        return (
+                          <circle
+                            key={cat.id || idx}
+                            cx="68"
+                            cy="68"
+                            r={radius}
+                            fill="transparent"
+                            stroke={col.solid}
+                            strokeWidth="14"
+                            strokeDasharray={`${sliceLen} ${circ}`}
+                            strokeDashoffset={chartLoaded ? offset : circ}
+                            style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                          />
+                        );
+                      });
+                    })()}
+                  </svg>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      textAlign: 'center',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>
+                      {devicesTotal}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 600, marginTop: '2px' }}>
+                      Total Unit
+                    </div>
+                  </div>
+                </div>
+
+                {/* Donut Legend List */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: '180px' }}>
+                  {displayCategories.map((cat, idx) => {
+                    const count = cat.device_count || 0;
+                    const pctOfTotal = devicesTotal > 0 ? Math.round((count / devicesTotal) * 100) : 0;
+                    const col = getCategoryColor(idx);
+                    const IconComp = getCategoryIcon(cat.name);
+                    return (
+                      <div
+                        key={cat.id || idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '5px 10px',
+                          borderRadius: '8px',
+                          backgroundColor: '#FFFFFF',
+                          border: `1px solid ${col.border}`,
+                          fontSize: '12px',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: col.solid }} />
+                          <IconComp size={13} color={col.solid} />
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</span>
+                        </div>
+                        <span style={{ fontWeight: 700, color: col.solid }}>
+                          {count} <span style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 500 }}>({pctOfTotal}%)</span>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Clean Category Summary Bar */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
+                padding: '10px 14px',
+                backgroundColor: '#F8FAFC',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Cakupan Kategori</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
+                  {displayCategories.length} <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#64748b' }}>Jenis Periferal</span>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Dominasi Terbanyak</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--electric-blue)', marginTop: '2px' }}>
+                  {dominantCategory?.name || 'Komputer'}{' '}
+                  <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#64748b' }}>
+                    ({dominantCategory?.device_count || 0} Unit)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Card Link */}
+          <div style={{ marginTop: '14px', paddingTop: '10px', borderTop: '1px solid var(--border-color)', textAlign: 'right' }}>
+            <button
+              onClick={() => onNavigate('devices')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--electric-blue)',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              Kelola data inventaris <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. ROW 2: Prioritas Evaluasi SAW & Realisasi Anggaran Pemeliharaan */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
         {/* Chart B: Prioritas & Evaluasi SAW (Modern Animated Priority Channels & Donut Chart) */}
         <div
           className="anim-fade-in"
@@ -1283,452 +1729,6 @@ export const DashboardView = ({ onNavigate }) => {
                 <ArrowRight size={12} />
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. ROW 2: Kategori Inventaris & Ringkasan Anggaran */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
-        {/* Chart C: Grafik Distribusi Inventaris Perangkat (Modern Animated Column & Donut Chart) */}
-        <div
-          className="anim-fade-in"
-          style={{
-            backgroundColor: '#ffffff',
-            padding: '20px 22px',
-            borderRadius: '14px',
-            border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-sm)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            position: 'relative',
-          }}
-        >
-          <div>
-            {/* Card Header with View Mode Switcher */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--electric-blue-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--electric-blue)',
-                  }}
-                >
-                  <BarChart3 size={17} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-                    Distribusi Inventaris Perangkat
-                  </h3>
-                  <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0 0' }}>
-                    Visualisasi perbandingan unit per kategori periferal lab
-                  </p>
-                </div>
-              </div>
-
-              {/* View Switcher Pill (Kolom vs Donut) */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    backgroundColor: '#F1F5F9',
-                    borderRadius: '8px',
-                    padding: '2.5px',
-                    border: '1px solid var(--border-color)',
-                  }}
-                >
-                  <button
-                    onClick={() => setCategoryChartType('bar')}
-                    title="Grafik Batang / Kolom"
-                    style={{
-                      padding: '3px 9px',
-                      borderRadius: '6px',
-                      fontSize: '11.5px',
-                      fontWeight: 600,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      backgroundColor: categoryChartType === 'bar' ? 'var(--surface-white)' : 'transparent',
-                      color: categoryChartType === 'bar' ? 'var(--electric-blue)' : '#64748B',
-                      boxShadow: categoryChartType === 'bar' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <BarChart2 size={12} />
-                    <span>Kolom</span>
-                  </button>
-                  <button
-                    onClick={() => setCategoryChartType('donut')}
-                    title="Grafik Komposisi Donut"
-                    style={{
-                      padding: '3px 9px',
-                      borderRadius: '6px',
-                      fontSize: '11.5px',
-                      fontWeight: 600,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      backgroundColor: categoryChartType === 'donut' ? 'var(--surface-white)' : 'transparent',
-                      color: categoryChartType === 'donut' ? 'var(--electric-blue)' : '#64748B',
-                      boxShadow: categoryChartType === 'donut' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <PieChart size={12} />
-                    <span>Donut</span>
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => onNavigate('devices')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--electric-blue)',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '2px',
-                  }}
-                >
-                  Semua <ChevronRight size={13} />
-                </button>
-              </div>
-            </div>
-
-            {/* CHART DISPLAY AREA */}
-            {categoryChartType === 'bar' ? (
-              /* 1. Mode Grafik Kolom (Vertical Bar Chart) dengan Gridlines & Animasi Naik */
-              <div
-                style={{
-                  position: 'relative',
-                  padding: '16px 8px 6px 8px',
-                  backgroundColor: '#FAFBFD',
-                  borderRadius: '12px',
-                  border: '1px solid #E2E8F0',
-                  marginBottom: '14px',
-                }}
-              >
-                {/* Horizontal Guide Gridlines */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '28px',
-                    left: '12px',
-                    right: '12px',
-                    bottom: '56px',
-                    pointerEvents: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div style={{ borderTop: '1px dashed #E2E8F0', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '10px', color: '#94A3B8', marginTop: '-7px', backgroundColor: '#FAFBFD', paddingLeft: '4px' }}>
-                      {maxCategoryCount} Unit
-                    </span>
-                  </div>
-                  <div style={{ borderTop: '1px dashed #E2E8F0', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '10px', color: '#94A3B8', marginTop: '-7px', backgroundColor: '#FAFBFD', paddingLeft: '4px' }}>
-                      {Math.ceil(maxCategoryCount / 2)} Unit
-                    </span>
-                  </div>
-                  <div style={{ borderTop: '1px solid #CBD5E1', width: '100%' }} />
-                </div>
-
-                {/* Animated Columns Grid */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${displayCategories.length}, 1fr)`,
-                    gap: '12px',
-                    alignItems: 'flex-end',
-                    height: '180px',
-                    position: 'relative',
-                    zIndex: 2,
-                    padding: '0 8px',
-                  }}
-                >
-                  {displayCategories.map((cat, idx) => {
-                    const count = cat.device_count || 0;
-                    const pctOfMax = maxCategoryCount > 0 ? Math.round((count / maxCategoryCount) * 100) : 0;
-                    const pctOfTotal = devicesTotal > 0 ? Math.round((count / devicesTotal) * 100) : 0;
-                    const colorScheme = getCategoryColor(idx);
-                    const IconComp = getCategoryIcon(cat.name);
-                    const isHovered = hoveredCategory === cat.id;
-
-                    return (
-                      <div
-                        key={cat.id || idx}
-                        className="chart-column-item"
-                        onMouseEnter={() => setHoveredCategory(cat.id)}
-                        onMouseLeave={() => setHoveredCategory(null)}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          height: '100%',
-                          justifyContent: 'flex-end',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {/* Value Badge at top of column */}
-                        <div
-                          style={{
-                            marginBottom: '6px',
-                            padding: '2px 7px',
-                            borderRadius: '12px',
-                            backgroundColor: isHovered ? colorScheme.solid : colorScheme.light,
-                            color: isHovered ? '#FFFFFF' : colorScheme.solid,
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            border: `1px solid ${colorScheme.border}`,
-                            transition: 'all 0.2s ease',
-                            animation: isHovered ? 'bouncePill 0.6s infinite' : 'none',
-                          }}
-                        >
-                          {count}
-                        </div>
-
-                        {/* Column Track & Animated Fill Bar */}
-                        <div
-                          style={{
-                            width: '100%',
-                            maxWidth: '42px',
-                            height: '105px',
-                            backgroundColor: '#F1F5F9',
-                            borderRadius: '8px 8px 3px 3px',
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            overflow: 'hidden',
-                            border: `1px solid ${isHovered ? colorScheme.solid : '#E2E8F0'}`,
-                            boxShadow: isHovered ? `0 0 0 2px ${colorScheme.light}` : 'none',
-                            transition: 'all 0.2s ease',
-                          }}
-                        >
-                          <div
-                            className="chart-bar-fill"
-                            style={{
-                              width: '100%',
-                              height: chartLoaded ? `${Math.max(count > 0 ? 12 : 4, pctOfMax)}%` : '0%',
-                              background: count > 0 ? colorScheme.gradient : '#CBD5E1',
-                              borderRadius: '7px 7px 0 0',
-                              borderTop: count > 0 ? '2px solid rgba(255, 255, 255, 0.75)' : 'none',
-                              boxShadow: count > 0 ? `0 4px 12px rgba(59, 130, 246, 0.25)` : 'none',
-                            }}
-                          />
-                        </div>
-
-                        {/* Column X-Axis Footer Label */}
-                        <div
-                          style={{
-                            marginTop: '10px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                            gap: '3px',
-                            width: '100%',
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '6px',
-                              backgroundColor: colorScheme.light,
-                              color: colorScheme.solid,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              border: `1px solid ${colorScheme.border}`,
-                            }}
-                          >
-                            <IconComp size={13} />
-                          </div>
-                          <span
-                            style={{
-                              fontSize: '11.5px',
-                              fontWeight: isHovered ? 700 : 600,
-                              color: isHovered ? 'var(--electric-blue)' : 'var(--text-primary)',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '68px',
-                            }}
-                            title={cat.name}
-                          >
-                            {cat.name}
-                          </span>
-                          <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 500 }}>
-                            {pctOfTotal}%
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              /* 2. Mode Grafik Donut Komposisi Kategori */
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
-                  flexWrap: 'wrap',
-                  gap: '16px',
-                  padding: '16px',
-                  backgroundColor: '#FAFBFD',
-                  borderRadius: '12px',
-                  border: '1px solid #E2E8F0',
-                  marginBottom: '14px',
-                  minHeight: '208px',
-                }}
-              >
-                {/* SVG Donut */}
-                <div style={{ position: 'relative', width: '136px', height: '136px', flexShrink: 0 }}>
-                  <svg width="136" height="136" viewBox="0 0 136 136" style={{ transform: 'rotate(-90deg)' }}>
-                    <circle cx="68" cy="68" r="52" fill="transparent" stroke="#E2E8F0" strokeWidth="14" />
-                    {(() => {
-                      const radius = 52;
-                      const circ = 2 * Math.PI * radius;
-                      let accOffset = 0;
-                      return displayCategories.map((cat, idx) => {
-                        const count = cat.device_count || 0;
-                        const sliceLen = devicesTotal > 0 ? (count / devicesTotal) * circ : 0;
-                        const offset = -accOffset;
-                        accOffset += sliceLen;
-                        const col = getCategoryColor(idx);
-                        if (sliceLen <= 0) return null;
-                        return (
-                          <circle
-                            key={cat.id || idx}
-                            cx="68"
-                            cy="68"
-                            r={radius}
-                            fill="transparent"
-                            stroke={col.solid}
-                            strokeWidth="14"
-                            strokeDasharray={`${sliceLen} ${circ}`}
-                            strokeDashoffset={chartLoaded ? offset : circ}
-                            style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
-                          />
-                        );
-                      });
-                    })()}
-                  </svg>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      textAlign: 'center',
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>
-                      {devicesTotal}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 600, marginTop: '2px' }}>
-                      Total Unit
-                    </div>
-                  </div>
-                </div>
-
-                {/* Donut Legend List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: '180px' }}>
-                  {displayCategories.map((cat, idx) => {
-                    const count = cat.device_count || 0;
-                    const pctOfTotal = devicesTotal > 0 ? Math.round((count / devicesTotal) * 100) : 0;
-                    const col = getCategoryColor(idx);
-                    const IconComp = getCategoryIcon(cat.name);
-                    return (
-                      <div
-                        key={cat.id || idx}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '5px 10px',
-                          borderRadius: '8px',
-                          backgroundColor: '#FFFFFF',
-                          border: `1px solid ${col.border}`,
-                          fontSize: '12px',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: col.solid }} />
-                          <IconComp size={13} color={col.solid} />
-                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</span>
-                        </div>
-                        <span style={{ fontWeight: 700, color: col.solid }}>
-                          {count} <span style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 500 }}>({pctOfTotal}%)</span>
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Clean Category Summary Bar */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '10px',
-                padding: '10px 14px',
-                backgroundColor: '#F8FAFC',
-                borderRadius: '10px',
-                border: '1px solid var(--border-color)',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Cakupan Kategori</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
-                  {displayCategories.length} <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#64748b' }}>Jenis Periferal</span>
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Dominasi Terbanyak</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--electric-blue)', marginTop: '2px' }}>
-                  {dominantCategory?.name || 'Komputer'}{' '}
-                  <span style={{ fontSize: '11.5px', fontWeight: 500, color: '#64748b' }}>
-                    ({dominantCategory?.device_count || 0} Unit)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Card Link */}
-          <div style={{ marginTop: '14px', paddingTop: '10px', borderTop: '1px solid var(--border-color)', textAlign: 'right' }}>
-            <button
-              onClick={() => onNavigate('devices')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--electric-blue)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              Kelola data inventaris <ArrowRight size={13} />
-            </button>
           </div>
         </div>
 
